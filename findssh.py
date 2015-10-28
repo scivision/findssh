@@ -25,12 +25,13 @@ def isportopen(host,port,timeout=0.15):
     s.settimeout(timeout) #seconds
     try:
         s.connect((host,port))
-        r=s.recv(16).decode('utf8').lower() #arbitrary number of bytes
+        r=s.recv(32).decode('utf8') #arbitrary number of bytes
+        print(r)
         s.close()
     except (OSError,socket.timeout,socket.error): #,ConnectionRefusedError
         return
 
-    if SERVICE in r:
+    if SERVICE in r.lower():
         return True
 #%% main loop
 def scanhosts(ownip,port,timeout):
