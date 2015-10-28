@@ -35,6 +35,9 @@ def isportopen(host,port,timeout=0.15):
         return True
 #%% main loop
 def scanhosts(ownip,port,timeout):
+    """
+    loops over xxx.xxx.xxx.1-254
+    """
     base = ownip.rsplit('.',1)[0]
     tail = range(1,255)
     servers = []

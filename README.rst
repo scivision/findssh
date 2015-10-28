@@ -1,7 +1,7 @@
 =======
 findssh
 =======
-Python script that finds SSH servers (or other services with open ports) on the local subnet, WITHOUT NMAP
+Python script that finds SSH servers (or other services with open ports) on an IPv4 subnet, WITHOUT NMAP
 
 Checks the string from the server to attempt to verify the correct service has been found.
 
