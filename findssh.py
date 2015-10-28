@@ -8,9 +8,6 @@ Michael Hirsch
 """
 from __future__ import division
 import socket
-#
-PORT=22
-TIMEOUT=0.15 #seconds
 #%% (1) get LAN IP of laptop
 # ref: http://stackoverflow.com/a/23822431
 def getLANip():
@@ -19,30 +16,42 @@ def getLANip():
     s.connect(('<broadcast>', 0))
     return s.getsockname()[0]
 
-laptopIP = getLANip()
-print('detected laptop IPv4 ' + str(laptopIP)) #str() in case of None
 #%% (2) scan own subnet for SSH servers
-def isportopen(host,port):
+def isportopen(host,port,timeout=0.15):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(TIMEOUT) #seconds
+    s.settimeout(timeout) #seconds
     try:
         s.connect((host,port))
         s.close()
-    except socket.timeout:
+    except (OSError,socket.timeout):
         return
     except ConnectionRefusedError:
         return True
 
-base = laptopIP.rsplit('.',1)[0]
-tail = range(1,255)
-servers = []
-print('searching {}.*'.format(base))
-for t in tail:
-    host = '.'.join((base,str(t)))
-    if isportopen(host,PORT):
-        servers.append(host)
-        print('found {} on port {}'.format(host,PORT))
-    if not t % 10:
-        print('{:.1f} % done, {} servers detected on port {}'.format(t/255*100.,len(servers),PORT))
+def scanhosts(ownip,port,timeout):
+    base = ownip.rsplit('.',1)[0]
+    tail = range(1,255)
+    servers = []
+    print('searching {}.*'.format(base))
+    for t in tail:
+        host = '.'.join((base,str(t)))
+        if isportopen(host,port):
+            servers.append(host)
+            print('found {} on port {}'.format(host,port))
+        if not t % 10:
+            print('{:.1f} % done, {} servers detected on port {}'.format(t/255*100.,len(servers),port))
+    return servers
 
-print('found SSH server IPs: \n'+str(servers))
+if __name__ == '__main__':
+    from argparse import ArgumentParser
+    p = ArgumentParser('scan for hosts with open port, without NMAP')
+    p.add_argument('-p','--port',help='single port to try',default=22,type=int)
+    p.add_argument('-t','--timeout',help='timeout to wait for server',default=0.15,type=float)
+    p.add_argument('-b','--baseip',help='instead of using own IP, set a specific subnet to scan')
+    p = p.parse_args()
+
+
+    ownip = getLANip() if not p.baseip else p.baseip
+    print('scanning IPv4 ' + str(ownip))
+    servers = scanhosts(ownip,p.port,p.timeout)
+    print('found SSH server IPs: \n'+str(servers))
