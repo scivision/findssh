@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 scans own LAN subnet for SSH servers on Port 22.
 Useful for machines that don't/can't have NMAP installed (e.g. Windows)
@@ -7,6 +8,8 @@ where the user would have only basic Python installed (Windows)
 Michael Hirsch
 """
 from __future__ import division
+from time import time
+from pprint import pprint
 import socket
 SERVICE='ssh' #try to match this string in server response
 #%% (1) get LAN IP of laptop
@@ -52,8 +55,8 @@ if __name__ == '__main__':
     p.add_argument('-b','--baseip',help='instead of using own IP, set a specific subnet to scan')
     p = p.parse_args()
 
-
+    tic = time()
     ownip = getLANip() if not p.baseip else p.baseip
-    print('scanning IPv4 ' + str(ownip))
+    print('own IPv4 ' + str(ownip))
     servers = scanhosts(ownip,p.port,p.timeout)
-    print('found SSH server IPs: \n'+str(servers))
+    print('found {} {} server IPs in {:.1f} seconds: \n'.format(len(servers),SERVICE,time()-tic)+str(servers))
