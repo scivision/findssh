@@ -8,6 +8,7 @@ Michael Hirsch
 """
 from __future__ import division
 import socket
+SERVICE='ssh' #try to match this string in server response
 #%% (1) get LAN IP of laptop
 # ref: http://stackoverflow.com/a/23822431
 def getLANip():
@@ -15,19 +16,20 @@ def getLANip():
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     s.connect(('<broadcast>', 0))
     return s.getsockname()[0]
-
 #%% (2) scan own subnet for SSH servers
 def isportopen(host,port,timeout=0.15):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(timeout) #seconds
     try:
         s.connect((host,port))
+        r=s.recv(16).decode('utf8').lower() #arbitrary number of bytes
         s.close()
-    except (OSError,socket.timeout):
+    except (OSError,socket.timeout,socket.error): #,ConnectionRefusedError
         return
-    except ConnectionRefusedError:
-        return True
 
+    if SERVICE in r:
+        return True
+#%% main loop
 def scanhosts(ownip,port,timeout):
     base = ownip.rsplit('.',1)[0]
     tail = range(1,255)
@@ -37,7 +39,7 @@ def scanhosts(ownip,port,timeout):
         host = '.'.join((base,str(t)))
         if isportopen(host,port):
             servers.append(host)
-            print('found {} on port {}'.format(host,port))
+            print('found {} on {} port {}'.format(SERVICE,host,port))
         if not t % 10:
             print('{:.1f} % done, {} servers detected on port {}'.format(t/255*100.,len(servers),port))
     return servers
@@ -46,7 +48,7 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
     p = ArgumentParser('scan for hosts with open port, without NMAP')
     p.add_argument('-p','--port',help='single port to try',default=22,type=int)
-    p.add_argument('-t','--timeout',help='timeout to wait for server',default=0.15,type=float)
+    p.add_argument('-t','--timeout',help='timeout to wait for server',default=0.1,type=float)
     p.add_argument('-b','--baseip',help='instead of using own IP, set a specific subnet to scan')
     p = p.parse_args()
 
