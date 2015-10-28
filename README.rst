@@ -5,7 +5,14 @@ Python script that finds SSH servers (or other services with open ports) on the 
 
 Checks the string from the server to attempt to verify the correct service has been found.
 
+Takes about 40 seconds on Linux or Windows. Tested with Python 2.7 & 3.5
 
-Takes about 40 seconds on Linux or Windows.
+Example
+=======
+::
 
-Future: consider non-blocking/threading
+  python findssh.py
+
+Future
+======
+consider non-blocking/threading
