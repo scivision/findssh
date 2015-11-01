@@ -9,7 +9,6 @@ Michael Hirsch
 """
 from __future__ import division
 from time import time
-from pprint import pprint
 import socket
 SERVICE='ssh' #try to match this string in server response
 #%% (1) get LAN IP of laptop
