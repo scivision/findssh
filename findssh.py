@@ -11,10 +11,10 @@ Note: if using Python < 3.3, you will need
 pip insall ipaddress
 """
 from __future__ import division,unicode_literals
-from six import PY2
+from six import PY2,string_types
 from time import time
 import socket
-from ipaddress import ip_address,ip_network
+from ipaddress import ip_address,ip_network,IPv4Network
 #
 if PY2: ConnectionRefusedError = OSError
 #%% (1) get LAN IP of laptop
@@ -42,13 +42,26 @@ def isportopen(host,port,service,timeout=0.15):
 
     if service in r.lower():
         return True
+
+def netfromaddress(addr):
+    addr = ip_address(addr) #in case it's string
+    if addr.version == 4:
+        return ip_network(ownip.exploded.rsplit('.',1)[0]+'.0/24')
+    else: #addr.version ==6
+        raise NotImplementedError('https://www.6net.org/publications/standards/draft-chown-v6ops-port-scanning-implications-00.txt')
 #%% main loop
-def scanhosts(ownip,port,service,timeout):
+def scanhosts(net,port,service,timeout):
     """
     loops over xxx.xxx.xxx.1-254
+    IPv4 only.
     """
-    ownip = ip_address(ownip) #in case it's string
-    net = ip_network(ownip.exploded.rsplit('.',1)[0]+'.0/24')
+    if not isinstance(net,IPv4Network):
+        net = netfromaddress(net)
+
+    if net.version == 6:
+        raise NotImplementedError('https://www.6net.org/publications/standards/draft-chown-v6ops-port-scanning-implications-00.txt')
+
+
     servers = []
     print('searching {}'.format(net))
     for t,a in enumerate(net.hosts()):
@@ -70,7 +83,7 @@ if __name__ == '__main__':
 
     tic = time()
     ownip = getLANip() if not p.baseip else p.baseip
-    print('own IPv4 ' + str(ownip))
+    print('own address ' + str(ownip))
     servers = scanhosts(ownip,p.port,p.service,p.timeout)
     print('found {} {} server IPs in {:.1f} seconds: \n'.format(
                          len(servers),p.service,time()-tic)+str(servers))
