@@ -7,14 +7,14 @@ where the user would have only basic Python installed (Windows)
 
 Michael Hirsch
 
-Note: if using Python < 3.4, you will need
-pip insall py2-ipaddress
+Note: if using Python < 3.3, you will need
+pip insall ipaddress
 """
-from __future__ import division
+from __future__ import division,unicode_literals
 from six import PY2
 from time import time
 import socket
-from ipaddress import ip_address,ip_network,ip_interface
+from ipaddress import ip_address,ip_network
 #
 if PY2: ConnectionRefusedError = OSError
 #%% (1) get LAN IP of laptop
