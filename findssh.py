@@ -8,7 +8,7 @@ where the user would have only basic Python installed (Windows)
 Michael Hirsch
 
 Note: if using Python < 3.3, you will need
-pip insall ipaddress
+pip install ipaddress
 """
 from __future__ import division,unicode_literals
 from six import PY2,string_types
