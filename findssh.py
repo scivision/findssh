@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-scans own LAN subnet for SSH servers on Port 22.
-Useful for machines that don't/can't have NMAP installed (e.g. Windows)
+scans IPv4 subnet for SSH servers on Port 22.
+Useful for machines that don't/can't have NMAP installed (e.g. Windows), and device does not have Avahi server.
 Yes this can be done simply via Linux shell, but I wanted to make it as cross-platform as possible
 where the user would have only basic Python installed (Windows)
 
@@ -11,7 +11,7 @@ Note: if using Python < 3.3, you will need
 pip install ipaddress
 """
 from __future__ import division,unicode_literals
-from six import PY2,string_types
+from six import PY2
 from time import time
 import socket
 from ipaddress import ip_address,ip_network,IPv4Network
@@ -58,7 +58,7 @@ def scanhosts(net,port,service,timeout):
     if not isinstance(net,IPv4Network):
         net = netfromaddress(net)
 
-    if net.version == 6:
+    if net.version != 4:
         raise NotImplementedError('https://www.6net.org/publications/standards/draft-chown-v6ops-port-scanning-implications-00.txt')
 
 
