@@ -9,6 +9,9 @@ Michael Hirsch
 
 Note: if using Python < 3.3, you will need
 pip install ipaddress
+
+Note: timeout value bare minimum is 0.15 seconds for LAN, suggest using higher values say 0.25 or 0.35 if you can stand the wait 254*0.35 seconds
+
 """
 from __future__ import division,unicode_literals
 from six import PY2
@@ -29,7 +32,7 @@ def getLANip():
     s.close()
     return ip_address(name)
 #%% (2) scan subnet for SSH servers
-def isportopen(host,port,service,timeout=0.15):
+def isportopen(host,port,service,timeout=0.25):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(timeout) #seconds
     try:
@@ -77,7 +80,7 @@ if __name__ == '__main__':
     p = ArgumentParser('scan for hosts with open port, without NMAP')
     p.add_argument('-p','--port',help='single port to try',default=22,type=int)
     p.add_argument('-s','--service',help='string to match to qualify detections',default='ssh')
-    p.add_argument('-t','--timeout',help='timeout to wait for server',default=0.1,type=float)
+    p.add_argument('-t','--timeout',help='timeout to wait for server',default=0.2,type=float)
     p.add_argument('-b','--baseip',help='instead of using own IP, set a specific subnet to scan')
     p = p.parse_args()
 
