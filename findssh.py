@@ -32,7 +32,7 @@ def getLANip():
     s.close()
     return ip_address(name.encode('utf-8').decode('utf-8')) #encode.decode is used for python2 and python3 compatibility
 #%% (2) scan subnet for SSH servers
-def isportopen(host,port,service,timeout=0.25):
+def isportopen(host,port,service,timeout=0.3):
     h = host.exploded
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(timeout) #seconds
@@ -93,7 +93,7 @@ if __name__ == '__main__':
     p = ArgumentParser('scan for hosts with open port, without NMAP')
     p.add_argument('-p','--port',help='single port to try',default=22,type=int)
     p.add_argument('-s','--service',help='string to match to qualify detections',default='ssh')
-    p.add_argument('-t','--timeout',help='timeout to wait for server',default=0.2,type=float)
+    p.add_argument('-t','--timeout',help='timeout to wait for server',default=0.3,type=float)
     p.add_argument('-b','--baseip',help='instead of using own IP, set a specific subnet to scan')
     p = p.parse_args()
 
