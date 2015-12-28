@@ -30,21 +30,34 @@ def getLANip():
     s.connect(('<broadcast>', 0))
     name= s.getsockname()[0]
     s.close()
-    return ip_address(name)
+    return ip_address(name.encode('utf-8').decode('utf-8')) #encode.decode is used for python2 and python3 compatibility
 #%% (2) scan subnet for SSH servers
 def isportopen(host,port,service,timeout=0.25):
+    h = host.exploded
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(timeout) #seconds
     try:
-        s.connect((host.exploded,port))
-        r=s.recv(32).decode('utf8') #arbitrary number of bytes
-        print(r)
+        s.connect((h,port))
+        b=s.recv(32) #arbitrary number of bytes
+
+        if not b: #empty reply
+            return
+
+        try:
+            u = b.splitlines()[0].decode('utf-8') #splitlines is in case the ASCII/UTF8 response is less than 32 bytes, hoping server sends a \r\n
+        except UnicodeDecodeError: # must not have been utf8 encoding..., maybe latin1 or something else..
+            u = b
+        print(u)
         s.close()
     except (ConnectionRefusedError,socket.timeout,socket.error):
         return
 
-    if service in r.lower():
-        return True
+    try:
+        if service in u.lower():
+            return True
+    except UnicodeDecodeError:
+        print('unable to decode server {} response'.format(h))
+        return
 
 def netfromaddress(addr):
     addr = ip_address(addr) #in case it's string
@@ -88,5 +101,6 @@ if __name__ == '__main__':
     ownip = getLANip() if not p.baseip else p.baseip
     print('own address ' + str(ownip))
     servers = scanhosts(ownip,p.port,p.service,p.timeout)
+    print('\n*** RESULTS ***\n')
     print('found {} {} server IPs in {:.1f} seconds: \n'.format(
                          len(servers),p.service,time()-tic)+str(servers))
