@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-scans IPv4 subnet for SSH servers on Port 22.
+scans IPv4 subnet for SSH servers on Port 22 or other server ports.
 Useful for machines that don't/can't have NMAP installed (e.g. Windows), and device does not have Avahi server.
 Yes this can be done simply via Linux shell, but I wanted to make it as cross-platform as possible
 where the user would have only basic Python installed (Windows)
@@ -40,24 +40,37 @@ def isportopen(host,port,service,timeout=0.3):
         s.connect((h,port))
         b=s.recv(32) #arbitrary number of bytes
 
-        if not b: #empty reply
-            return
+#%% service decode (optional)
+        return validateservice(service,u,h)
 
-        try:
-            u = b.splitlines()[0].decode('utf-8') #splitlines is in case the ASCII/UTF8 response is less than 32 bytes, hoping server sends a \r\n
-        except UnicodeDecodeError: # must not have been utf8 encoding..., maybe latin1 or something else..
-            u = b
-        print(u)
-        s.close()
     except (ConnectionRefusedError,socket.timeout,socket.error):
         return
+    finally:
+        s.close()
 
-    try:
-        if service in u.lower():
-            return True
-    except UnicodeDecodeError:
-        print('unable to decode server {} response'.format(h))
+
+def validateservice(service,u,h):
+    if not b: #empty reply
         return
+#%% non-empty reply
+    try:
+        u = b.splitlines()[0].decode('utf-8') #splitlines is in case the ASCII/UTF8 response is less than 32 bytes, hoping server sends a \r\n
+    except UnicodeDecodeError: # must not have been utf8 encoding..., maybe latin1 or something else..
+        u = b
+
+    print(u)
+#%% optional service validation
+    if service:
+        try:
+            if service in u.lower():
+                return True
+        except UnicodeDecodeError:
+            print('unable to decode {} response'.format(h))
+            return
+    else:
+        return True
+
+
 
 def netfromaddress(addr):
     addr = ip_address(addr) #in case it's string
@@ -92,7 +105,7 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
     p = ArgumentParser('scan for hosts with open port, without NMAP')
     p.add_argument('-p','--port',help='single port to try',default=22,type=int)
-    p.add_argument('-s','--service',help='string to match to qualify detections',default='ssh')
+    p.add_argument('-s','--service',help='string to match to qualify detections')
     p.add_argument('-t','--timeout',help='timeout to wait for server',default=0.3,type=float)
     p.add_argument('-b','--baseip',help='instead of using own IP, set a specific subnet to scan')
     p = p.parse_args()
