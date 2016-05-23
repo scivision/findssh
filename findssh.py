@@ -41,7 +41,7 @@ def isportopen(host,port,service,timeout=0.3):
         b=s.recv(32) #arbitrary number of bytes
 
 #%% service decode (optional)
-        return validateservice(service,u,h)
+        return validateservice(service,h,b)
 
     except (ConnectionRefusedError,socket.timeout,socket.error):
         return
@@ -49,7 +49,7 @@ def isportopen(host,port,service,timeout=0.3):
         s.close()
 
 
-def validateservice(service,u,h):
+def validateservice(service,h,b):
     if not b: #empty reply
         return
 #%% non-empty reply
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
     p = ArgumentParser('scan for hosts with open port, without NMAP')
     p.add_argument('-p','--port',help='single port to try',default=22,type=int)
-    p.add_argument('-s','--service',help='string to match to qualify detections')
+    p.add_argument('-s','--service',help='string to match to qualify detections',default='')
     p.add_argument('-t','--timeout',help='timeout to wait for server',default=0.3,type=float)
     p.add_argument('-b','--baseip',help='instead of using own IP, set a specific subnet to scan')
     p = p.parse_args()
