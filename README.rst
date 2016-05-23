@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/scienceopen/findssh.svg?branch=master
+    :target: https://travis-ci.org/scienceopen/findssh
+
 =======
 findssh
 =======

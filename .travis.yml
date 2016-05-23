@@ -1,0 +1,24 @@
+language: python
+
+python:
+    - 3.5
+
+sudo: true
+dist: trusty
+
+notifications:
+  email: false
+
+git:
+  depth: 1
+
+install:
+    - pip -q install coveralls
+    - pip -q install -r requirements.txt
+
+
+script:
+    - coverage run findssh.py
+
+after_success:
+    - coveralls
