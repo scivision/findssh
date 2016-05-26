@@ -6,7 +6,13 @@ findssh
 =======
 Platform-independent Python script that finds SSH servers (or other services with open ports) on an IPv4 subnet, WITHOUT NMAP
 
-Checks the string from the server to attempt to verify the correct service has been found.
+Options
+=======
+
+-s  checks the string from the server to attempt to verify the correct service has been found.
+-t  timeout 
+-b  baseip (check other subnet besides your own)
+-p  port
 
 Takes about 40 seconds to scan an IPv4 subnet.
 
