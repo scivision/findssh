@@ -31,7 +31,7 @@ def getLANip():
     try:
         s.connect(('<broadcast>', 0))
     except OSError:
-        s.connect(('1.1.1.1',0)) # for BSD/Mac
+        s.connect(('8.8.8.8',0)) # for BSD/Mac
     name= s.getsockname()[0]
     s.close()
     return ip_address(name.encode('utf-8').decode('utf-8')) #encode.decode is used for python2 and python3 compatibility
