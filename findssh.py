@@ -27,7 +27,11 @@ def getLANip():
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    s.connect(('<broadcast>', 0))
+    # don't use link local here (169.254.x.x) unless you have a specific need
+    try:
+        s.connect(('<broadcast>', 0))
+    except OSError:
+        s.connect(('1.1.1.1',0)) # for BSD/Mac
     name= s.getsockname()[0]
     s.close()
     return ip_address(name.encode('utf-8').decode('utf-8')) #encode.decode is used for python2 and python3 compatibility
