@@ -2,34 +2,35 @@ notifications:
   email: false
 
 git:
-  depth: 1
-
-env: pyv=3.5
+  depth: 3
+  
+env: 
+  global:
+    - pyv=3.5
 
 matrix:
   include:
     - os: osx
-        env: osv=MacOSX
-        osx_image: xcode7.3
+      env: 
+        - osv=MacOSX
 
     - os: linux
-        env: osv=Linux
-        sudo: required
-        dist: trusty
+      env: 
+        - osv=Linux
 
-before_install:
+
+install:
     - wget http://repo.continuum.io/miniconda/Miniconda-latest-$osv-x86_64.sh -O miniconda.sh
     - bash miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
-
-install:
+    - conda update --yes --quiet conda
     - conda create --yes -n test python=$pyv
     - source activate test
     - pip -q install coveralls
-    - pip -q install -r requirements.txt
+    - python setup.py develop
 
 script:
-    - coverage run findssh.py
+    - coverage run test/test.py
 
 after_success:
     - coveralls
