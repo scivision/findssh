@@ -30,7 +30,7 @@ install:
     - python setup.py develop
 
 script:
-    - coverage run test/test.py
+    - coverage run findssh.py
 
 after_success:
     - coveralls
