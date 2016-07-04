@@ -79,7 +79,7 @@ def validateservice(service,h,b):
 def netfromaddress(addr):
     addr = ip_address(addr) #in case it's string
     if addr.version == 4:
-        return ip_network(ownip.exploded.rsplit('.',1)[0]+'.0/24')
+        return ip_network(addr.exploded.rsplit('.',1)[0]+'.0/24')
     else: #addr.version ==6
         raise NotImplementedError('https://www.6net.org/publications/standards/draft-chown-v6ops-port-scanning-implications-00.txt')
 #%% main loop
