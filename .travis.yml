@@ -1,33 +1,17 @@
+language: python
+
 notifications:
   email: false
 
 git:
   depth: 3
   
-env: 
-  global:
-    - pyv=3.5
-
-matrix:
-  include:
-    - os: osx
-      env: 
-        - osv=MacOSX
-
-    - os: linux
-      env: 
-        - osv=Linux
-
+os:
+    - osx
+    - linux
 
 install:
-    - wget http://repo.continuum.io/miniconda/Miniconda-latest-$osv-x86_64.sh -O miniconda.sh
-    - bash miniconda.sh -b -p $HOME/miniconda
-    - export PATH=$HOME/miniconda/bin:$PATH
-    - conda update --yes --quiet conda
-    - conda create --yes --quiet -n test python=$pyv
-    - source activate test
-    - pip -q install coveralls
-    - python setup.py develop
+    - pip install -q coverage
 
 script:
     - coverage run findssh.py
