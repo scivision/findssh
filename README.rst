@@ -4,7 +4,7 @@
 =======
 findssh
 =======
-Platform-independent Python script that finds SSH servers (or other services with open ports) on an IPv4 subnet, WITHOUT NMAP
+Platform-independent Python >= 3.3 script that finds SSH servers (or other services with open ports) on an IPv4 subnet, WITHOUT NMAP
 
 Options
 =======

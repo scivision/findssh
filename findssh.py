@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 scans IPv4 subnet for SSH servers on Port 22 or other server ports.
 Useful for machines that don't/can't have NMAP installed (e.g. Windows), and device does not have Avahi server.
@@ -7,51 +7,42 @@ where the user would have only basic Python installed (Windows)
 
 Michael Hirsch
 
-Note: if using Python < 3.3, you will need
-pip install ipaddress
-
 Note: timeout value bare minimum is 0.15 seconds for LAN, suggest using higher values say 0.25 or 0.35 if you can stand the wait 254*0.35 seconds
 
 """
-from __future__ import division,unicode_literals
-from six import PY2
 from time import time
 import socket
 from ipaddress import ip_address,ip_network,IPv4Network
-#
-if PY2: ConnectionRefusedError = OSError
+
 #%% (1) get LAN IP of laptop
 def getLANip():
     """ get IP of own interface
      ref: http://stackoverflow.com/a/23822431
     """
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     # don't use link local here (169.254.x.x) unless you have a specific need
-    try:
-        s.connect(('<broadcast>', 0))
-    except OSError:
-        s.connect(('8.8.8.8',80)) # for BSD/Mac
-    name= s.getsockname()[0]
-    s.close()
+        try:
+            s.connect(('<broadcast>', 0))
+        except OSError:
+            s.connect(('8.8.8.8',80)) # for BSD/Mac
+        name = s.getsockname()[0]
+    
     return ip_address(name.encode('utf-8').decode('utf-8')) #encode.decode is used for python2 and python3 compatibility
+
 #%% (2) scan subnet for SSH servers
 def isportopen(host,port,service,timeout=0.3):
     h = host.exploded
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(timeout) #seconds
-    try:
-        s.connect((h,port))
-        b=s.recv(32) #arbitrary number of bytes
-
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(timeout) #seconds
+        try:
+            s.connect((h,port))
+            b=s.recv(32) #arbitrary number of bytes
 #%% service decode (optional)
-        return validateservice(service,h,b)
+            return validateservice(service,h,b)
 
-    except (ConnectionRefusedError,socket.timeout,socket.error):
-        return
-    finally:
-        s.close()
-
+        except (ConnectionRefusedError,socket.timeout,socket.error):
+            return
 
 def validateservice(service,h,b):
     if not b: #empty reply
@@ -73,8 +64,6 @@ def validateservice(service,h,b):
             return
     else:
         return True
-
-
 
 def netfromaddress(addr):
     addr = ip_address(addr) #in case it's string
@@ -115,8 +104,12 @@ if __name__ == '__main__':
     p = p.parse_args()
 
     tic = time()
-    ownip = getLANip() if not p.baseip else p.baseip
-    print('own address ' + str(ownip))
+    if not p.baseip:
+        ownip = getLANip()
+        print('own address ' + str(ownip))
+    else:
+        ownip = p.baseip
+
     servers = scanhosts(ownip,p.port,p.service,p.timeout)
     print('\n*** RESULTS ***\n')
     print('found {} {} server IPs in {:.1f} seconds: \n'.format(
