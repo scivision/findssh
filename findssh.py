@@ -14,6 +14,21 @@ from time import time
 import socket
 from ipaddress import ip_address,ip_network,IPv4Network
 
+def main(p):
+    tic = time()
+    if not p.baseip:
+        ownip = getLANip()
+        print('own address ' + str(ownip))
+    else:
+        ownip = p.baseip
+
+    servers = scanhosts(ownip,p.port,p.service,p.timeout)
+    print('\n*** RESULTS ***\n')
+    print('found {} {} server IPs in {:.1f} seconds:'.format(
+                                     len(servers),p.service,time()-tic))
+    print('\n'.join([str(i) for i in servers]))
+
+
 #%% (1) get LAN IP of laptop
 def getLANip():
     """ get IP of own interface
@@ -101,16 +116,6 @@ if __name__ == '__main__':
     p.add_argument('-s','--service',help='string to match to qualify detections',default='')
     p.add_argument('-t','--timeout',help='timeout to wait for server',default=0.3,type=float)
     p.add_argument('-b','--baseip',help='instead of using own IP, set a specific subnet to scan')
-    p = p.parse_args()
+    P = p.parse_args()
 
-    tic = time()
-    if not p.baseip:
-        ownip = getLANip()
-        print('own address ' + str(ownip))
-    else:
-        ownip = p.baseip
-
-    servers = scanhosts(ownip,p.port,p.service,p.timeout)
-    print('\n*** RESULTS ***\n')
-    print('found {} {} server IPs in {:.1f} seconds: \n'.format(
-                         len(servers),p.service,time()-tic)+str(servers))
+    main(P)
