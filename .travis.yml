@@ -9,12 +9,6 @@ git:
 matrix:
   include:
     - os: osx
-      env: pyv=2.7
-
-    - os: linux
-      env: pyv=2.7
-      
-    - os: osx
       env: pyv=3.5
 
     - os: linux
@@ -37,10 +31,6 @@ install:
     - source activate test
     - pip -q install coveralls
     
-    - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then
-        pip install ipaddress;
-      fi
-
 script: coverage run findssh.py -v
 
 after_success: coveralls
