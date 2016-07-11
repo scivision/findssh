@@ -31,6 +31,7 @@ install:
     - source activate test
     - pip -q install coveralls
     
-script: coverage run findssh.py -v
+# no -v without run_module_suite()
+script: coverage run findssh.py 
 
 after_success: coveralls
