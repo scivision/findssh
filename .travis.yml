@@ -37,7 +37,9 @@ install:
     - source activate test
     - pip -q install coveralls
     
-    - [[ $TRAVIS_PYTHON_VERSION == 2.7 ]] && pip install ipaddress
+    - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then
+        pip install ipaddress;
+      fi
 
 script: coverage run findssh.py -v
 
