@@ -5,7 +5,7 @@ Useful for machines that don't/can't have NMAP installed (e.g. Windows), and dev
 Yes this can be done simply via Linux shell, but I wanted to make it as cross-platform as possible
 where the user would have only basic Python installed (Windows)
 
-Michael Hirsch
+Michael Hirsch, Ph.D.
 
 Note: timeout value bare minimum is 0.15 seconds for LAN, suggest using higher values say 0.25 or 0.35 if you can stand the wait 254*0.35 seconds
 
@@ -18,7 +18,7 @@ def main(p):
     tic = time()
     if not p.baseip:
         ownip = getLANip()
-        print('own address ' + str(ownip))
+        print('own address',ownip)
     else:
         ownip = p.baseip
 
@@ -75,7 +75,7 @@ def validateservice(service,h,b):
             if service in u.lower():
                 return True
         except UnicodeDecodeError:
-            print('unable to decode {} response'.format(h))
+            print('unable to decode response',h)
             return
     else:
         return True
@@ -100,7 +100,7 @@ def scanhosts(net,port,service,timeout):
 
 
     servers = []
-    print('searching {}'.format(net))
+    print('searching',net)
     for t,a in enumerate(net.hosts()):
         if isportopen(a,port,service):
             servers.append(a)

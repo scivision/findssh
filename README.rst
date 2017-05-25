@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/scienceopen/findssh.svg?branch=master
-    :target: https://travis-ci.org/scienceopen/findssh
+.. image:: https://travis-ci.org/scivision/findssh.svg?branch=master
+    :target: https://travis-ci.org/scivision/findssh
 
 =======
 findssh
