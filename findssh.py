@@ -11,6 +11,7 @@ Note: timeout value bare minimum is 0.15 seconds for LAN, suggest using higher v
 
 """
 from time import time
+import logging
 import socket
 from ipaddress import ip_address,ip_network,IPv4Network
 
@@ -23,9 +24,8 @@ def main(p):
         ownip = p.baseip
 
     servers = scanhosts(ownip,p.port,p.service,p.timeout)
-    print('\n*** RESULTS ***\n')
-    print('found {} {} server IPs in {:.1f} seconds:'.format(
-                                     len(servers),p.service,time()-tic))
+    print('\n*** RESULTS ***')
+    print('found',len(servers),p.service,'server IPs in {:.1f} seconds:'.format(time()-tic))
     print('\n'.join([str(i) for i in servers]))
 
 
@@ -41,9 +41,10 @@ def getLANip():
             s.connect(('<broadcast>', 0))
         except OSError:
             s.connect(('8.8.8.8',80)) # for BSD/Mac
+
         name = s.getsockname()[0]
-    
-    return ip_address(name.encode('utf-8').decode('utf-8')) #encode.decode is used for python2 and python3 compatibility
+
+    return ip_address(name)
 
 #%% (2) scan subnet for SSH servers
 def isportopen(host,port,service,timeout=0.3):
@@ -57,6 +58,7 @@ def isportopen(host,port,service,timeout=0.3):
             return validateservice(service,h,b)
 
         except (ConnectionRefusedError,socket.timeout,socket.error):
+            logging.info('no connection to {} {}'.format(h,port))
             return
 
 def validateservice(service,h,b):
@@ -68,14 +70,14 @@ def validateservice(service,h,b):
     except UnicodeDecodeError: # must not have been utf8 encoding..., maybe latin1 or something else..
         u = b
 
-    print(u)
+    print('\n',u)
 #%% optional service validation
     if service:
         try:
             if service in u.lower():
                 return True
         except UnicodeDecodeError:
-            print('unable to decode response',h)
+            logging.error('unable to decode response'.format(h))
             return
     else:
         return True
@@ -86,8 +88,9 @@ def netfromaddress(addr):
         return ip_network(addr.exploded.rsplit('.',1)[0]+'.0/24')
     else: #addr.version ==6
         raise NotImplementedError('https://www.6net.org/publications/standards/draft-chown-v6ops-port-scanning-implications-00.txt')
+
 #%% main loop
-def scanhosts(net,port,service,timeout):
+def scanhosts(net:ip_network, port:int, service:str, timeout:float):
     """
     loops over xxx.xxx.xxx.1-254
     IPv4 only.
@@ -104,10 +107,14 @@ def scanhosts(net,port,service,timeout):
     for t,a in enumerate(net.hosts()):
         if isportopen(a,port,service):
             servers.append(a)
-            print('found {} on {} port {}'.format(service,a,port))
+            print('found',service,'on',a,'port',port)
+
         if not t % 20:
-            print('{:.1f} % done, {} {} servers detected on port {}'.format(t/255*100.,len(servers),service,port))
+            print('{:.1f} % done'.format(t/255*100), len(servers), service,
+                  'servers detected on port',port,'\r',end="",flush=True)
+
     return servers
+
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
