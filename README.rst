@@ -4,6 +4,9 @@
 .. image:: https://coveralls.io/repos/github/scivision/findssh/badge.svg?branch=master
     :target: https://coveralls.io/github/scivision/findssh?branch=master
 
+.. image:: https://api.codeclimate.com/v1/badges/c7409d3c78d12c3df14b/maintainability
+   :target: https://codeclimate.com/github/scivision/findssh/maintainability
+   :alt: Maintainability
 
 =======
 findssh
