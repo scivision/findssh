@@ -1,3 +1,2 @@
-engines:
-  python:
-    enabled: true
+languages:
+  python: true
