@@ -126,6 +126,6 @@ if __name__ == '__main__':
     p.add_argument('-s','--service',help='string to match to qualify detections',default='')
     p.add_argument('-t','--timeout',help='timeout to wait for server',default=TIMEOUT,type=float)
     p.add_argument('-b','--baseip',help='instead of using own IP, set a specific subnet to scan')
-    P = p.parse_args()
+    p = p.parse_args()
 
     run(p.port, p.service, p.timeout, p.baseip)
