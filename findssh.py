@@ -15,17 +15,20 @@ import logging
 import socket
 from ipaddress import ip_address,ip_network,IPv4Network
 
-def main(p):
+TIMEOUT = 0.3
+PORT=22
+
+def run(port:int=PORT, service:str='', timeout:float=TIMEOUT, baseip:str=None):
     tic = time()
-    if not p.baseip:
+    if not baseip:
         ownip = getLANip()
         print('own address',ownip)
     else:
-        ownip = p.baseip
+        ownip = baseip
 
-    servers = scanhosts(ownip,p.port,p.service,p.timeout)
+    servers = scanhosts(ownip, port, service, timeout)
     print('\n*** RESULTS ***')
-    print('found',len(servers),p.service,'server IPs in {:.1f} seconds:'.format(time()-tic))
+    print('found',len(servers), service,'server IPs in {:.1f} seconds:'.format(time()-tic))
     print('\n'.join([str(i) for i in servers]))
 
 
@@ -47,7 +50,7 @@ def getLANip():
     return ip_address(name)
 
 #%% (2) scan subnet for SSH servers
-def isportopen(host,port,service,timeout=0.3):
+def isportopen(host:ip_address, port:int, service:str, timeout:float=TIMEOUT):
     h = host.exploded
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(timeout) #seconds
@@ -61,7 +64,7 @@ def isportopen(host,port,service,timeout=0.3):
             logging.info('no connection to {} {}'.format(h,port))
             return
 
-def validateservice(service,h,b):
+def validateservice(service:str, h:bytes, b:bytes):
     if not b: #empty reply
         return
 #%% non-empty reply
@@ -82,7 +85,7 @@ def validateservice(service,h,b):
     else:
         return True
 
-def netfromaddress(addr):
+def netfromaddress(addr:ip_address):
     addr = ip_address(addr) #in case it's string
     if addr.version == 4:
         return ip_network(addr.exploded.rsplit('.',1)[0]+'.0/24')
@@ -119,10 +122,10 @@ def scanhosts(net:ip_network, port:int, service:str, timeout:float):
 if __name__ == '__main__':
     from argparse import ArgumentParser
     p = ArgumentParser('scan for hosts with open port, without NMAP')
-    p.add_argument('-p','--port',help='single port to try',default=22,type=int)
+    p.add_argument('-p','--port',help='single port to try',default=PORT, type=int)
     p.add_argument('-s','--service',help='string to match to qualify detections',default='')
-    p.add_argument('-t','--timeout',help='timeout to wait for server',default=0.3,type=float)
+    p.add_argument('-t','--timeout',help='timeout to wait for server',default=TIMEOUT,type=float)
     p.add_argument('-b','--baseip',help='instead of using own IP, set a specific subnet to scan')
     P = p.parse_args()
 
-    main(P)
+    run(p.port, p.service, p.timeout, p.baseip)

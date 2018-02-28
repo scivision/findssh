@@ -11,28 +11,50 @@
 =======
 findssh
 =======
-Platform-independent Python >= 3.3 script that finds SSH servers (or other services with open ports) on an IPv4 subnet, WITHOUT NMAP.
+Platform-independent Python >= 3.5 script that finds SSH servers (or other services with open ports) on an IPv4 subnet, WITHOUT NMAP.
 
 :author: Michael Hirsch, Ph.D.
 
 .. contents::
 
-
-Options
+Install
 =======
+You can just run ``findssh.py`` directly, but to allow use from other programs, you can install by::
+
+    pip install findssh
+    
+or from this repo::
+
+    pip install -e .
+    
+
+Usage
+=======
+Takes about 40 seconds to scan an IPv4 subnet.
+
+from Terminal::
+
+  python findssh.py
+  
+or from within Python
+
+.. code:: python
+
+    import findssh
+    
+    findssh.run()
+    
+    
+Command line options
+---------------------
 
 -s  checks the string from the server to attempt to verify the correct service has been found.
 -t  timeout 
 -b  baseip (check other subnet besides your own)
 -p  port
 
-Takes about 40 seconds to scan an IPv4 subnet.
 
-Example
-=======
-::
-
-  python findssh.py
+    
 
 Future
 ======
@@ -41,4 +63,4 @@ consider non-blocking/threading
 
 Notes
 =====
-Blocker for Python <= 3.2 is that ``socket`` doesn't have a context manager.
+Python <= 3.2 is that ``socket`` doesn't have a context manager.
