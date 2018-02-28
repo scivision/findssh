@@ -6,6 +6,7 @@ from setuptools import setup,find_packages
 
 setup(name='findssh',
       packages=find_packages(),
+      version='1.0.1',
       author='Michael Hirsch, Ph.D.',
       url='https://github.com/scivision/findssh',
       long_description=open('README.rst').read(),
@@ -25,5 +26,6 @@ setup(name='findssh',
       'Topic :: System :: Networking',
       'Topic :: Utilities',
       ],
+      scripts=['findssh.py']
 	  )
 
