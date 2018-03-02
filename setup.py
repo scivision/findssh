@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 install_requires = []
-tests_require = ['nose','coveralls']
+tests_require = ['pytest','coveralls']
 # %%
 from setuptools import setup,find_packages
 
