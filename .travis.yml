@@ -12,7 +12,7 @@ os:
 
 group: travis_latest
 
-#env: 
+#env:
 #  - TRAVIS_PYTHON_VERSION=3.6
 
 
@@ -35,12 +35,14 @@ git:
 #    - conda create -n test python=$TRAVIS_PYTHON_VERSION
 #    - source activate test
 #    - pip -q install coveralls
-    
+
 # no -v without run_module_suite()
 
-install: pip install -e .[tests]
+install: pip -q install -e .[tests]
 
-script: coverage run findssh.py 
+script:
+  - pytest
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then coverage run tests/test_all.py -v; fi
 
-after_success: 
+after_success:
   - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then coveralls; fi
