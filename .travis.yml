@@ -36,13 +36,12 @@ git:
 #    - source activate test
 #    - pip -q install coveralls
 
-# no -v without run_module_suite()
 
 install: pip -q install -e .[tests]
 
 script:
-  - pytest
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then coverage run tests/test_all.py -v; fi
+  - python findssh.py
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then coverage run findssh.py; fi
 
 after_success:
   - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then coveralls; fi
