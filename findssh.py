@@ -14,6 +14,8 @@ from time import time
 import logging
 import socket
 from ipaddress import ip_address,ip_network,IPv4Network
+import concurrent.futures
+from itertools import repeat
 
 TIMEOUT = 0.3
 PORT=22
@@ -28,12 +30,12 @@ def run(port:int=PORT, service:str='', timeout:float=TIMEOUT, baseip:str=None):
 
     servers = scanhosts(ownip, port, service, timeout)
     print('\n*** RESULTS ***')
-    print('found',len(servers), service,'server IPs in {:.1f} seconds:'.format(time()-tic))
+    print('found',len(servers), service,'servers on port',port,'in {:.1f} seconds:'.format(time()-tic))
     print('\n'.join([str(i) for i in servers]))
 
 
 #%% (1) get LAN IP of laptop
-def getLANip():
+def getLANip() -> ip_address:
     """ get IP of own interface
      ref: http://stackoverflow.com/a/23822431
     """
@@ -50,21 +52,25 @@ def getLANip():
     return ip_address(name)
 
 #%% (2) scan subnet for SSH servers
-def isportopen(host:ip_address, port:int, service:str, timeout:float=TIMEOUT):
+def isportopen(host:ip_address, port:int, service:str, timeout:float=TIMEOUT, verbose:bool=True) -> bool:
     h = host.exploded
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(timeout) #seconds
         try:
             s.connect((h,port))
-            b=s.recv(32) #arbitrary number of bytes
+            b = s.recv(32) #arbitrary number of bytes
 #%% service decode (optional)
-            return validateservice(service,h,b)
+            ok = validateservice(service,h,b)
+            if ok and verbose:
+                print('found',service,'on',host,'port',port)
+
+            return ok
 
         except (ConnectionRefusedError,socket.timeout,socket.error):
             logging.info('no connection to {} {}'.format(h,port))
             return
 
-def validateservice(service:str, h:bytes, b:bytes):
+def validateservice(service:str, h:bytes, b:bytes) -> bool:
     if not b: #empty reply
         return
 #%% non-empty reply
@@ -85,7 +91,7 @@ def validateservice(service:str, h:bytes, b:bytes):
     else:
         return True
 
-def netfromaddress(addr:ip_address):
+def netfromaddress(addr:ip_address) -> ip_network:
     addr = ip_address(addr) #in case it's string
     if addr.version == 4:
         return ip_network(addr.exploded.rsplit('.',1)[0]+'.0/24')
@@ -93,7 +99,7 @@ def netfromaddress(addr:ip_address):
         raise NotImplementedError('https://www.6net.org/publications/standards/draft-chown-v6ops-port-scanning-implications-00.txt')
 
 #%% main loop
-def scanhosts(net:ip_network, port:int, service:str, timeout:float):
+def scanhosts(net:ip_network, port:int, service:str, timeout:float) -> list:
     """
     loops over xxx.xxx.xxx.1-254
     IPv4 only.
@@ -105,16 +111,12 @@ def scanhosts(net:ip_network, port:int, service:str, timeout:float):
         raise NotImplementedError('https://www.6net.org/publications/standards/draft-chown-v6ops-port-scanning-implications-00.txt')
 
 
-    servers = []
     print('searching',net)
-    for t,a in enumerate(net.hosts()):
-        if isportopen(a,port,service):
-            servers.append(a)
-            print('found',service,'on',a,'port',port)
 
-        if not t % 20:
-            print('{:.1f} % done'.format(t/255*100), len(servers), service,
-                  'servers detected on port',port,'\r',end="",flush=True)
+    hosts = list(net.hosts())
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        servers = [h for h,s in zip(hosts, executor.map(isportopen, hosts, repeat(port), repeat(service))) if s]
 
     return servers
 
