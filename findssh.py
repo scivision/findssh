@@ -115,8 +115,9 @@ def scanhosts(net:ip_network, port:int, service:str, timeout:float) -> list:
 
     hosts = list(net.hosts())
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers = 100) as executor:
         servers = [h for h,s in zip(hosts, executor.map(isportopen, hosts, repeat(port), repeat(service))) if s]
+
 
     return servers
 

@@ -23,7 +23,7 @@
 findssh
 =======
 Platform-independent Python >= 3.5 script that finds SSH servers (or other services with open ports) on an IPv4 subnet, WITHOUT NMAP.
-Launches numerous threads to scan IPv4 subnet in less than 5 seconds (with 100 threads, in less than 1 second), using Python standard library
+Scans entire IPv4 subnet in less than 1 second using 100 threads via Python standard library
 `concurrent.futures <https://docs.python.org/3/library/concurrent.futures.html>`_.
 
 :author: Michael Hirsch, Ph.D.
