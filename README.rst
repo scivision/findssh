@@ -39,6 +39,8 @@ You can just run ``findssh.py`` directly, but to allow use from other programs, 
 or from this repo::
 
     pip install -e .
+    
+It is expected that your default `python` version is at least 3.5, which was released in 2015.
 
 
 Usage

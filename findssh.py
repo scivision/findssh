@@ -10,6 +10,9 @@ Michael Hirsch, Ph.D.
 Note: timeout value bare minimum is 0.15 seconds for LAN, suggest using higher values say 0.25 or 0.35 if you can stand the wait 254*0.35 seconds
 
 """
+import sys
+if sys.version_info < (3,5):
+    raise RuntimeError('findssh requires at least Python 3.5')
 from time import time
 import logging
 import socket
