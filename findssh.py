@@ -1,44 +1,53 @@
 #!/usr/bin/env python
 """
 scans IPv4 subnet for SSH servers on Port 22 or other server ports.
-Useful for machines that don't/can't have NMAP installed (e.g. Windows), and device does not have Avahi server.
-Yes this can be done simply via Linux shell, but I wanted to make it as cross-platform as possible
-where the user would have only basic Python installed (Windows)
+Useful for machines that don't/can't have NMAP installed (e.g. Windows),
+  and device does not have Avahi server.
+I wanted to make it as cross-platform as possible,
+  where the user would have only basic Python installed (Windows)
 
 Michael Hirsch, Ph.D.
 
-Note: timeout value bare minimum is 0.15 seconds for LAN, suggest using higher values say 0.25 or 0.35 if you can stand the wait 254*0.35 seconds
+Note: timeout value bare minimum is 0.15 seconds for LAN,
+    suggest using higher values say 0.25 or 0.35.
 
 """
-import sys
-if sys.version_info < (3,5):
-    raise RuntimeError('findssh requires at least Python 3.5')
 from time import time
 import logging
+from typing import Union, List
 import socket
-from ipaddress import ip_address,ip_network,IPv4Network
+import ipaddress as ip
 import concurrent.futures
 from itertools import repeat
 
 TIMEOUT = 0.3
-PORT=22
+PORT = 22
 
-def run(port:int=PORT, service:str='', timeout:float=TIMEOUT, baseip:str=None):
+
+def run(port: int=PORT, service: str='', timeout: float=TIMEOUT,
+        baseip: Union[str, ip.IPv4Address]=None, debug: bool=False):
     tic = time()
+
+    ownip: Union[ip.IPv4Address, ip.IPv6Address]
     if not baseip:
         ownip = getLANip()
-        print('own address',ownip)
+        print('own address', ownip)
     else:
-        ownip = baseip
+        ownip = ip.ip_address(baseip)
 
-    servers = scanhosts(ownip, port, service, timeout)
+    assert isinstance(ownip, ip.IPv4Address)
+
+    net: ip.IPv4Network = netfromaddress(ownip)
+
+    servers = scanhosts(net, port, service, timeout, debug)
     print('\n*** RESULTS ***')
-    print('found',len(servers), service,'servers on port',port,'in {:.1f} seconds:'.format(time()-tic))
-    print('\n'.join([str(i) for i in servers]))
+    print('found', len(servers), service, 'servers on port', port,
+          'in {:.1f} seconds:'.format(time()-tic))
+    print('\n'.join(map(str, servers)))
 
 
-#%% (1) get LAN IP of laptop
-def getLANip() -> ip_address:
+# %% (1) get LAN IP of laptop
+def getLANip() -> Union[ip.IPv4Address, ip.IPv6Address]:
     """ get IP of own interface
      ref: http://stackoverflow.com/a/23822431
     """
@@ -48,79 +57,103 @@ def getLANip() -> ip_address:
         try:
             s.connect(('<broadcast>', 0))
         except OSError:
-            s.connect(('8.8.8.8',80)) # for BSD/Mac
+            s.connect(('8.8.8.8', 80))  # for BSD/Mac
 
-        name = s.getsockname()[0]
+        name: str = s.getsockname()[0]
 
-    return ip_address(name)
+    return ip.ip_address(name)
 
-#%% (2) scan subnet for SSH servers
-def isportopen(host:ip_address, port:int, service:str, timeout:float=TIMEOUT, verbose:bool=True) -> bool:
-    h = host.exploded
+
+# %% (2) scan subnet for SSH servers
+def isportopen(host: ip.IPv4Address, port: int, service: str,
+               timeout: float=TIMEOUT,
+               verbose: bool=True) -> Union[bool, None]:
+    h: str = host.exploded
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.settimeout(timeout) #seconds
+        s.settimeout(timeout)  # seconds
         try:
-            s.connect((h,port))
-            b = s.recv(32) #arbitrary number of bytes
-#%% service decode (optional)
-            ok = validateservice(service,h,b)
+            s.connect((h, port))
+            b = s.recv(32)  # arbitrary number of bytes
+# %% service decode (optional)
+            ok = validateservice(service, h, b)
             if ok and verbose:
-                print('found',service,'on',host,'port',port)
+                print('found', service, 'on', host, 'port', port)
 
             return ok
 
-        except (ConnectionRefusedError,socket.timeout,socket.error):
-            logging.info('no connection to {} {}'.format(h,port))
-            return
+        except (ConnectionRefusedError, socket.timeout, socket.error):
+            logging.info('no connection to {} {}'.format(h, port))
+            return None
 
-def validateservice(service:str, h:bytes, b:bytes) -> bool:
-    if not b: #empty reply
-        return
-#%% non-empty reply
+
+def validateservice(service: str, h: str, b: bytes) -> bool:
+    if not b:  # empty reply
+        return False
+# %% non-empty reply
+    u: Union[str, bytes]
     try:
-        u = b.splitlines()[0].decode('utf-8') #splitlines is in case the ASCII/UTF8 response is less than 32 bytes, hoping server sends a \r\n
-    except UnicodeDecodeError: # must not have been utf8 encoding..., maybe latin1 or something else..
+        """
+        splitlines is in case the ASCII/UTF8 response is less than 32 bytes,
+        hoping server sends a \r\n
+        """
+        u = b.splitlines()[0].decode('utf-8')
+    except UnicodeDecodeError:
+        """
+        must not have been utf8 encoding..., maybe latin1 or something else..
+        """
         u = b
 
-    print('\n',u)
-#%% optional service validation
+    print('\n', u)
+# %% optional service validation
+    val: bool = False
     if service:
         try:
             if service in u.lower():
-                return True
+                val = True
         except UnicodeDecodeError:
             logging.error('unable to decode response'.format(h))
-            return
+            val = False
     else:
-        return True
+        val = True
 
-def netfromaddress(addr:ip_address) -> ip_network:
-    addr = ip_address(addr) #in case it's string
-    if addr.version == 4:
-        return ip_network(addr.exploded.rsplit('.',1)[0]+'.0/24')
-    else: #addr.version ==6
-        raise NotImplementedError('https://www.6net.org/publications/standards/draft-chown-v6ops-port-scanning-implications-00.txt')
+    return val
 
-#%% main loop
-def scanhosts(net:ip_network, port:int, service:str, timeout:float) -> list:
+
+def netfromaddress(addr: ip.IPv4Address) -> ip.IPv4Network:
+
+    assert isinstance(addr, ip.IPv4Address)
+
+    net = ip.ip_network(addr.exploded.rsplit('.', 1)[0]+'.0/24')
+
+    assert isinstance(net, ip.IPv4Network)
+
+    return net
+
+
+# %% main loop
+def scanhosts(net: ip.IPv4Network,
+              port: int, service: str,
+              timeout: float, debug: bool) -> List[ip.IPv4Address]:
     """
     loops over xxx.xxx.xxx.1-254
     IPv4 only.
     """
-    if not isinstance(net,IPv4Network):
-        net = netfromaddress(net)
 
-    if net.version != 4:
-        raise NotImplementedError('https://www.6net.org/publications/standards/draft-chown-v6ops-port-scanning-implications-00.txt')
+    assert isinstance(net, ip.IPv4Network)
 
+    print('searching', net)
 
-    print('searching',net)
+    hosts: List[ip.IPv4Address] = list(net.hosts())
 
-    hosts = list(net.hosts())
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers = 100) as executor:
-        servers = [h for h,s in zip(hosts, executor.map(isportopen, hosts, repeat(port), repeat(service))) if s]
-
+    if debug:
+        servers = [h for h in hosts if isportopen(h, port, service, timeout)]
+    else:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=100) as exc:
+            servers = [h for h, s in zip(hosts,
+                                         exc.map(isportopen, hosts,
+                                                 repeat(port),
+                                                 repeat(service))) if s]
 
     return servers
 
@@ -128,10 +161,17 @@ def scanhosts(net:ip_network, port:int, service:str, timeout:float) -> list:
 if __name__ == '__main__':
     from argparse import ArgumentParser
     p = ArgumentParser('scan for hosts with open port, without NMAP')
-    p.add_argument('-p','--port',help='single port to try',default=PORT, type=int)
-    p.add_argument('-s','--service',help='string to match to qualify detections',default='')
-    p.add_argument('-t','--timeout',help='timeout to wait for server',default=TIMEOUT,type=float)
-    p.add_argument('-b','--baseip',help='instead of using own IP, set a specific subnet to scan')
-    p = p.parse_args()
+    p.add_argument('-p', '--port', help='single port to try',
+                   default=PORT, type=int)
+    p.add_argument('-s', '--service',
+                   help='string to match to qualify detections', default='')
+    p.add_argument('-t', '--timeout',
+                   help='timeout to wait for server',
+                   default=TIMEOUT, type=float)
+    p.add_argument('-b', '--baseip',
+                   help='set a specific subnet to scan')
+    p.add_argument('--debug', help='run single-threaded for debugging',
+                   action='store_true')
+    P = p.parse_args()
 
-    run(p.port, p.service, p.timeout, p.baseip)
+    run(P.port, P.service, P.timeout, P.baseip, P.debug)
