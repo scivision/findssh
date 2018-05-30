@@ -22,11 +22,12 @@
 =======
 findssh
 =======
-Platform-independent Python >= 3.5 script that finds SSH servers (or other services with open ports) on an IPv4 subnet, WITHOUT NMAP.
+Platform-independent **Python >= 3.6** script that finds SSH servers (or other services with open ports) on an IPv4 subnet, WITHOUT NMAP.
 Scans entire IPv4 subnet in less than 1 second using 100 threads via Python standard library
 `concurrent.futures <https://docs.python.org/3/library/concurrent.futures.html>`_.
 
 :author: Michael Hirsch, Ph.D.
+
 
 .. contents::
 
@@ -68,9 +69,3 @@ Command line options
 -b  baseip (check other subnet besides your own)
 -p  port
 
-
-
-
-Notes
-=====
-Python <= 3.2 is that ``socket`` doesn't have a context manager.

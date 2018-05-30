@@ -43,7 +43,7 @@ install: pip -q install -e .[tests]
 script:
   - python findssh.py
   - mypy findssh.py
-  - flake8 findssh.py
+  - flake8
 
 
 after_success:
