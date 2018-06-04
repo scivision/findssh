@@ -18,6 +18,10 @@
 .. image:: https://api.codeclimate.com/v1/badges/c7409d3c78d12c3df14b/maintainability
    :target: https://codeclimate.com/github/scivision/findssh/maintainability
    :alt: Maintainability
+   
+.. image:: http://pepy.tech/badge/findssh
+   :target: http://pepy.tech/project/findssh
+   :alt: PyPi Download stats
 
 =======
 findssh
