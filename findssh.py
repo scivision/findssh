@@ -158,7 +158,7 @@ def scanhosts(net: ip.IPv4Network,
     return servers
 
 
-if __name__ == '__main__':
+def main():
     from argparse import ArgumentParser
     p = ArgumentParser('scan for hosts with open port, without NMAP')
     p.add_argument('-p', '--port', help='single port to try',
@@ -175,3 +175,7 @@ if __name__ == '__main__':
     P = p.parse_args()
 
     run(P.port, P.service, P.timeout, P.baseip, P.debug)
+
+
+if __name__ == '__main__':
+    main()

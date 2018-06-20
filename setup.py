@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
-install_requires = []
+from typing import List
+
+install_requires: List[str] = []
 tests_require = ['pytest', 'coveralls', 'flake8', 'mypy']
 # %%
 
 setup(name='findssh',
       packages=find_packages(),
-      version='1.0.5',
+      version='1.0.6',
       author='Michael Hirsch, Ph.D.',
       url='https://github.com/scivision/findssh',
-      long_description=open('README.rst').read(),
+      long_description=open('README.md').read(),
+      long_description_content_type="text/markdown",
       description='find open servers on your IPv4 subnet, e.g. SSH.',
       install_requires=install_requires,
       tests_require=tests_require,
@@ -27,6 +30,7 @@ setup(name='findssh',
           'Topic :: System :: Networking',
           'Topic :: Utilities',
       ],
+      entry_points={'console_scripts': ['findssh = findssh:main']},
       scripts=['findssh.py'],
       include_package_data=True,
       )
