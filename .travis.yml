@@ -4,7 +4,7 @@ fast_finish: true
 
 python:
   - 3.6
-  - "3.7-dev" 
+  - 3.7-dev
   
 os:
   - linux
@@ -37,7 +37,7 @@ git:
 #    - pip -q install coveralls
 
 
-install: pip -q install -e .[tests]
+install: pip install -e .[tests]
 
 script:
   - pytest -sv
