@@ -34,19 +34,18 @@ os:
 #    - conda update -q conda
 #    - conda create -n test python=$TRAVIS_PYTHON_VERSION
 #    - source activate test
-#    - pip -q install coveralls
 
 
 install: pip install -e .[tests]
 
 script:
   - pytest -sv
-  - mypy . --ignore-missing-imports
   - flake8
-
+  - mypy . --ignore-missing-imports
 
 after_success:
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then 
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
     pytest --cov;
-    coveralls; 
+    coveralls;
     fi
+
