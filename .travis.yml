@@ -1,23 +1,23 @@
 # this also works great on osx, but I disabled osx to conserve Travis-CI resources.
 language: python
-fast_finish: true
+sudo: required
+dist: xenial
+group: travis_latest
+
+git:
+  depth: 3
+  quiet: true
 
 python:
   - 3.6
-  - 3.7-dev
+  - 3.7
   
 os:
   - linux
 #  - osx
 
-group: travis_latest
-
 #env:
 #  - TRAVIS_PYTHON_VERSION=3.6
-
-
-git:
-  depth: 3
 
 #before_install:
 #    - if [[ $TRAVIS_OS_NAME == osx ]]; then
