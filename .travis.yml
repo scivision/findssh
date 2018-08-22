@@ -1,7 +1,5 @@
 # this also works great on osx, but I disabled osx to conserve Travis-CI resources.
 language: python
-sudo: required
-dist: xenial
 group: travis_latest
 
 git:
@@ -10,7 +8,7 @@ git:
 
 python:
 - 3.6
-- 3.7
+- 3.5
 
 os:
 - linux

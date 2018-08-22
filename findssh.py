@@ -28,7 +28,6 @@ def run(port: int=PORT, service: str='', timeout: float=TIMEOUT,
         baseip: Union[str, ip.IPv4Address]=None, debug: bool=False):
     tic = time()
 
-    ownip: Union[ip.IPv4Address, ip.IPv6Address]
     if not baseip:
         ownip = getLANip()
         print('own address', ownip)
@@ -37,7 +36,7 @@ def run(port: int=PORT, service: str='', timeout: float=TIMEOUT,
 
     assert isinstance(ownip, ip.IPv4Address)
 
-    net: ip.IPv4Network = netfromaddress(ownip)
+    net = netfromaddress(ownip)
 
     servers = scanhosts(net, port, service, timeout, debug)
     print('\n*** RESULTS ***')
@@ -59,7 +58,7 @@ def getLANip() -> Union[ip.IPv4Address, ip.IPv6Address]:
         except OSError:
             s.connect(('8.8.8.8', 80))  # for BSD/Mac
 
-        name: str = s.getsockname()[0]
+        name = s.getsockname()[0]
 
     return ip.ip_address(name)
 
@@ -67,8 +66,8 @@ def getLANip() -> Union[ip.IPv4Address, ip.IPv6Address]:
 # %% (2) scan subnet for SSH servers
 def isportopen(host: ip.IPv4Address, port: int, service: str,
                timeout: float=TIMEOUT,
-               verbose: bool=True) -> Union[bool, None]:
-    h: str = host.exploded
+               verbose: bool=True) -> bool:
+    h = host.exploded
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(timeout)  # seconds
@@ -84,38 +83,31 @@ def isportopen(host: ip.IPv4Address, port: int, service: str,
 
         except (ConnectionRefusedError, socket.timeout, socket.error):
             logging.info('no connection to {} {}'.format(h, port))
-            return None
+            return False
 
 
 def validateservice(service: str, h: str, b: bytes) -> bool:
     if not b:  # empty reply
         return False
 # %% non-empty reply
-    u: Union[str, bytes]
     try:
         """
         splitlines is in case the ASCII/UTF8 response is less than 32 bytes,
         hoping server sends a \r\n
         """
         u = b.splitlines()[0].decode('utf-8')
+        print('\n', u)
     except UnicodeDecodeError:
         """
         must not have been utf8 encoding..., maybe latin1 or something else..
         """
-        u = b
+        print('\n', b)
+        return False
 
-    print('\n', u)
 # %% optional service validation
-    val: bool = False
-    if service:
-        try:
-            if service in u.lower():
-                val = True
-        except UnicodeDecodeError:
-            logging.error('unable to decode response'.format(h))
-            val = False
-    else:
-        val = True
+    val = True
+    if service and service not in u.lower():
+        val = False
 
     return val
 
@@ -144,7 +136,7 @@ def scanhosts(net: ip.IPv4Network,
 
     print('searching', net)
 
-    hosts: List[ip.IPv4Address] = list(net.hosts())
+    hosts = net.hosts()
 
     if debug:
         servers = [h for h in hosts if isportopen(h, port, service, timeout)]
