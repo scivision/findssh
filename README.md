@@ -8,7 +8,7 @@
 
 # Find SSH servers (without NMAP)
 
-Platform-independent **Python &ge; 3.6** script that finds SSH servers (or other services with open ports) on an IPv4 subnet, WITHOUT NMAP.
+Platform-independently find SSH servers (or other services with open ports) on an IPv4 subnet, WITHOUT NMAP.
 Scans entire IPv4 subnet in less than 1 second using 100 threads via Python standard library
 [concurrent.futures](https://docs.python.org/3/library/concurrent.futures.html).
 
