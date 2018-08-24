@@ -35,13 +35,14 @@ os:
 #    - source activate test
 
 
-install: pip install -e .[tests]
+install:
+- pip install -e .[tests]
+- [[ $TRAVIS_PYTHON_VERSION == 3.6* ]] && pip install -e .[cov]
 
 script:
 - pytest -rsv
 
 - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
-  pip install -e .[cov];
   flake8;
   mypy . --ignore-missing-imports;
   fi
