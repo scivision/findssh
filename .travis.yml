@@ -37,7 +37,7 @@ os:
 
 install:
 - pip install -e .[tests]
-- [[ $TRAVIS_PYTHON_VERSION == 3.6* ]] && pip install -e .[cov]
+- if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then pip install -e .[cov]; fi
 
 script:
 - pytest -rsv
