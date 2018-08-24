@@ -12,6 +12,8 @@ Platform-independently find SSH servers (or other services with open ports) on a
 Scans entire IPv4 subnet in less than 1 second using 100 threads via Python standard library
 [concurrent.futures](https://docs.python.org/3/library/concurrent.futures.html).
 
+Although speed advantages weren't seen in our testing, `findssh` works with PyPy as well.
+
 ## Install
 
 Just run `findssh.py` directly.

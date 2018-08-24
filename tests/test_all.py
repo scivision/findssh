@@ -5,7 +5,10 @@ import findssh
 
 
 def test_script():
-    subprocess.check_call(['findssh'])
+    try:
+        subprocess.check_call(['findssh'])
+    except FileNotFoundError:
+        pytest.skip('script not installed in PATH')
 
 
 def test_mod():
@@ -13,4 +16,4 @@ def test_mod():
 
 
 if __name__ == '__main__':
-    pytest.main(['-xv', __file__])
+    pytest.main(['-xrsv', __file__])
