@@ -14,7 +14,10 @@ def test_script():
 
 def test_mod():
     servers = findssh.run()
-    assert isinstance(servers[0], ip.IPv4Address)
+    try:
+        assert isinstance(servers[0], ip.IPv4Address)
+    except IndexError:
+        pytest.xfail('no servers found')
 
 
 if __name__ == '__main__':
