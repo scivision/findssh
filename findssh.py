@@ -18,15 +18,17 @@ from typing import Union, List
 import socket
 import ipaddress as ip
 import concurrent.futures
-from itertools import repeat
+import itertools
 
 TIMEOUT = 0.3
 PORT = 22
 
 
-def run(port: int=PORT, service: str='', timeout: float=TIMEOUT,
-        baseip: Union[str, ip.IPv4Address]=None, debug: bool=False):
-    tic = time()
+def run(port: int = PORT,
+        service: str = '',
+        timeout: float = TIMEOUT,
+        baseip: Union[str, ip.IPv4Address] = None,
+        debug: bool = False) -> List[ip.IPv4Address]:
 
     if not baseip:
         ownip = getLANip()
@@ -38,11 +40,7 @@ def run(port: int=PORT, service: str='', timeout: float=TIMEOUT,
 
     net = netfromaddress(ownip)
 
-    servers = scanhosts(net, port, service, timeout, debug)
-    print('\n*** RESULTS ***')
-    print('found', len(servers), service, 'servers on port', port,
-          'in {:.1f} seconds:'.format(time()-tic))
-    print('\n'.join(map(str, servers)))
+    return scanhosts(net, port, service, timeout, debug)
 
 
 # %% (1) get LAN IP of laptop
@@ -65,8 +63,8 @@ def getLANip() -> Union[ip.IPv4Address, ip.IPv6Address]:
 
 # %% (2) scan subnet for SSH servers
 def isportopen(host: ip.IPv4Address, port: int, service: str,
-               timeout: float=TIMEOUT,
-               verbose: bool=True) -> bool:
+               timeout: float = TIMEOUT,
+               verbose: bool = True) -> bool:
     h = host.exploded
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -136,16 +134,15 @@ def scanhosts(net: ip.IPv4Network,
 
     print('searching', net)
 
-    hosts = net.hosts()
+    hosts = list(net.hosts())
 
     if debug:
         servers = [h for h in hosts if isportopen(h, port, service, timeout)]
     else:
         with concurrent.futures.ThreadPoolExecutor(max_workers=100) as exc:
-            servers = [h for h, s in zip(hosts,
-                                         exc.map(isportopen, hosts,
-                                                 repeat(port),
-                                                 repeat(service))) if s]
+            portsopen = exc.map(isportopen, hosts,
+                                itertools.repeat(port), itertools.repeat(service))
+            servers = list(itertools.compress(hosts, portsopen))
 
     return servers
 
@@ -166,7 +163,14 @@ def main():
                    action='store_true')
     P = p.parse_args()
 
-    run(P.port, P.service, P.timeout, P.baseip, P.debug)
+    servers = run(P.port, P.service, P.timeout, P.baseip, P.debug)
+
+    tic = time()
+
+    print('\n*** RESULTS ***')
+    print('found', len(servers), P.service, 'servers on port', P.port,
+          'in {:.1f} seconds:'.format(time()-tic))
+    print('\n'.join(map(str, servers)))
 
 
 if __name__ == '__main__':

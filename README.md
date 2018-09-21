@@ -14,6 +14,8 @@ Scans entire IPv4 subnet in less than 1 second using 100 threads via Python stan
 
 Although speed advantages weren't seen in our testing, `findssh` works with PyPy as well.
 
+Matlab `findssh.m` works similarly.
+
 ## Install
 
 Just run `findssh.py` directly.
