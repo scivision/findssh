@@ -88,19 +88,13 @@ def validateservice(service: str, h: str, b: bytes) -> bool:
     if not b:  # empty reply
         return False
 # %% non-empty reply
-    try:
-        """
-        splitlines is in case the ASCII/UTF8 response is less than 32 bytes,
-        hoping server sends a \r\n
-        """
-        u = b.splitlines()[0].decode('utf-8')
-        print('\n', u)
-    except UnicodeDecodeError:
-        """
-        must not have been utf8 encoding..., maybe latin1 or something else..
-        """
-        print('\n', b)
-        return False
+    """
+    splitlines is in case the ASCII/UTF8 response is less than 32 bytes,
+    hoping server sends a \r\n
+    """
+    u = b.splitlines()[0].decode('utf-8', 'ignore')
+    print('\n', u)
+
 
 # %% optional service validation
     val = True
