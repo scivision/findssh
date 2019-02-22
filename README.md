@@ -2,6 +2,7 @@
 [![Travis-CI status](https://travis-ci.org/scivision/findssh.svg?branch=master)](https://travis-ci.org/scivision/findssh)
 [![Coverage percent](https://coveralls.io/repos/github/scivision/findssh/badge.svg?branch=master)](https://coveralls.io/github/scivision/findssh?branch=master)
 [![AppVeyor-CI status](https://ci.appveyor.com/api/projects/status/pk5ebkekh0u4q90t?svg=true)](https://ci.appveyor.com/project/scivision/findssh)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/findssh.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/findssh/context:python)
 [![PyPi versions](https://img.shields.io/pypi/pyversions/findssh.svg)](https://pypi.python.org/pypi/findssh)
 [![Maintainability](https://api.codeclimate.com/v1/badges/c7409d3c78d12c3df14b/maintainability)](https://codeclimate.com/github/scivision/findssh/maintainability)
 [![PyPi Download stats](http://pepy.tech/badge/findssh)](http://pepy.tech/project/findssh)
