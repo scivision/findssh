@@ -18,18 +18,18 @@ def isportopen(host: ip.IPv4Address, port: int, service: str,
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(timeout)  # seconds
-        try:
-            s.connect((h, port))
-            b = s.recv(32)  # arbitrary number of bytes
-# %% service decode (optional)
-            ok = validateservice(service, h, b)
-            if ok and verbose:
-                print('found', service, 'on', host, 'port', port)
+        ret = s.connect_ex((h, port))
 
-            return ok
-
-        except (ConnectionRefusedError, socket.timeout, socket.error):
+        if ret:
             return False
+
+        b = s.recv(32)  # arbitrary number of bytes
+# %% service decode (optional)
+    ok = validateservice(service, h, b)
+    if ok and verbose:
+        print('found', service, 'on', host, 'port', port)
+
+    return ok
 
 
 def arbiter(net: ip.IPv4Network,
