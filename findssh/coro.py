@@ -4,16 +4,16 @@ here using only ONE thread total, instead of the slower one-thread-per-address
 threadpool.py method
 """
 import ipaddress as ip
-import itertools
-from typing import Tuple, List
+from typing import AsyncGenerator, Tuple
 import asyncio
 
-from .base import PORT, TIMEOUT, validateservice, getLANip, netfromaddress
+from .base import validateservice, getLANip, netfromaddress
 
 
-def main(net: ip.IPv4Network = None,
-         port: int = PORT, service: str = '',
-         timeout: float = TIMEOUT):
+async def main(net: ip.IPv4Network,
+               port: int, service: str,
+               timeout: float, verbose: bool = False) -> AsyncGenerator[ip.IPv4Address, None]:
+
     if not net:
         ownip = getLANip()
         print('own address', ownip)
@@ -26,59 +26,33 @@ def main(net: ip.IPv4Network = None,
 
     if not isinstance(net, ip.IPv4Network):
         net = netfromaddress(ownip)
-    print('searching', net)
 
-    loop = asyncio.new_event_loop()
-    servers = loop.run_until_complete(arbiter(net, port, service, timeout))
-    return servers
+    # print(list(net.hosts()))
+    futures = [isportopen(host, port, service) for host in net.hosts()]
+    for future in asyncio.as_completed(futures, timeout=timeout):
+        try:
+            exists, host = await future
+        except asyncio.TimeoutError:
+            continue
+        except ConnectionRefusedError as err:
+            if verbose:
+                print(err)
+            continue
 
-
-async def run(host: ip.IPv4Address,
-              port: int,
-              service: str,
-              timeout: float) -> Tuple[ip.IPv4Address, bool]:
-    """
-    loops over xxx.xxx.xxx.1-254
-    IPv4 only.
-    """
-    if not timeout:
-        timeout = TIMEOUT
-
-    try:
-        portopen = await asyncio.wait_for(isportopen(host, port, service), timeout=timeout)
-        return host, portopen
-    except (asyncio.TimeoutError, ConnectionRefusedError, OSError):
-        return host, False
+        if exists:
+            yield host
 
 
-async def isportopen(host: ip.IPv4Address, port: int, service: str,
-                     verbose: bool = True) -> bool:
+async def isportopen(host: ip.IPv4Address,
+                     port: int, service: str) -> Tuple[bool, ip.IPv4Address]:
     """
     https://docs.python.org/3/library/asyncio-stream.html#asyncio.open_connection
     """
-    h = host.exploded
+    host_str = host.exploded
 
-    r, w = await asyncio.open_connection(h, port)
+    r, w = await asyncio.open_connection(host_str, port)
     b = await r.read(32)  # arbitrary number of bytes
-
 # %% service decode (optional)
-    ok = validateservice(service, h, b)
+    exists = validateservice(service, host_str, b)
 
-    if ok and verbose:
-        print('found', service, 'on', host, 'port', port)
-
-    return ok
-
-
-async def arbiter(net: ip.IPv4Network, port: int, service: str, timeout: float) -> List[ip.IPv4Address]:
-    assert isinstance(net, ip.IPv4Network), 'only IPv4'
-
-    hosts = net.hosts()
-
-    futures = [run(host, port, service, timeout) for host in hosts]
-
-    portopen = await asyncio.gather(*futures)
-
-    hosts, portopen = zip(*portopen)
-
-    return list(itertools.compress(hosts, portopen))
+    return exists, host

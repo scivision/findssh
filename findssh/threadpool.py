@@ -8,11 +8,11 @@ from typing import List
 import itertools
 import socket
 
-from .base import PORT, TIMEOUT, validateservice, getLANip, netfromaddress
+from .base import validateservice, getLANip, netfromaddress
 
 
 def isportopen(host: ip.IPv4Address, port: int, service: str,
-               timeout: float = TIMEOUT,
+               timeout: float,
                verbose: bool = True) -> bool:
     h = host.exploded
 
@@ -50,16 +50,16 @@ def arbiter(net: ip.IPv4Network,
         servers = [h for h in hosts if isportopen(h, port, service, timeout)]
     else:
         with concurrent.futures.ThreadPoolExecutor(max_workers=100) as exc:
-            portsopen = exc.map(isportopen, hosts,
-                                itertools.repeat(port), itertools.repeat(service))
+            portsopen = exc.map(isportopen, hosts, itertools.repeat(port),
+                                itertools.repeat(service), itertools.repeat(timeout))
             servers = list(itertools.compress(hosts, portsopen))
 
     return servers
 
 
-def main(net: ip.IPv4Network = None,
-         port: int = PORT, service: str = '',
-         timeout: float = TIMEOUT):
+def main(net: ip.IPv4Network,
+         port: int, service: str,
+         timeout: float):
 
     if not net:
         ownip = getLANip()

@@ -1,9 +1,6 @@
 import ipaddress as ip
 import socket
 
-PORT = 22
-TIMEOUT = 0.5  # should be at least 0.3 to allow for network / CPU delays.
-
 
 def getLANip() -> ip.IPv4Address:
     """ get IP of own interface
@@ -44,10 +41,4 @@ def validateservice(service: str, h: str, b: bytes) -> bool:
 
 def netfromaddress(addr: ip.IPv4Address) -> ip.IPv4Network:
 
-    assert isinstance(addr, ip.IPv4Address)
-
-    net = ip.ip_network(addr.exploded.rsplit('.', 1)[0]+'.0/24')
-
-    assert isinstance(net, ip.IPv4Network)
-
-    return net
+    return ip.ip_network(addr.exploded.rsplit('.', 1)[0]+'.0/24')
