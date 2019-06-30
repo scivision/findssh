@@ -31,9 +31,9 @@ matrix:
     after_success:
     - pytest --cov
     - coveralls
-  - os: osx
-    language: minimal
-    install: pip3 install -e .[tests]
+#  - os: osx
+#    language: minimal
+#    install: pip3 install -e .[tests]
 #  - os: windows
 #    language: minimal
 #    before_install:
