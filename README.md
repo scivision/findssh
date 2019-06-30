@@ -1,5 +1,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1431634.svg)](https://doi.org/10.5281/zenodo.1431634)
-[![Travis-CI status](https://travis-ci.org/scivision/findssh.svg?branch=master)](https://travis-ci.org/scivision/findssh)
+
+[![Build Status](https://travis-ci.com/scivision/findssh.svg?branch=master)](https://travis-ci.com/scivision/findssh)
 [![Coverage percent](https://coveralls.io/repos/github/scivision/findssh/badge.svg?branch=master)](https://coveralls.io/github/scivision/findssh?branch=master)
 [![Build status](https://ci.appveyor.com/api/projects/status/jbwdfjqxxbugb20g?svg=true)](https://ci.appveyor.com/project/scivision/findssh)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/findssh.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/findssh/context:python)
