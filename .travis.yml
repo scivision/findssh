@@ -9,6 +9,8 @@ git:
 python:
 # - 3.8-dev # buggy in travis
 - 3.7
+- 3.6
+- 3.5
 
 matrix:
   include:
@@ -28,6 +30,7 @@ matrix:
     script:
     - flake8
     - mypy .
+    - pytest -r a -v
     after_success:
     - pytest --cov
     - coveralls
@@ -42,5 +45,5 @@ matrix:
 
 install: pip install -e .[tests]
 
-script: pytest -rsv
+script: pytest -r a -v
 

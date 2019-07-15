@@ -19,24 +19,20 @@ def getLANip() -> ip.IPv4Address:
     return ip.ip_address(name)
 
 
-def validateservice(service: str, h: str, b: bytes) -> bool:
-    if not b:  # empty reply
-        return False
-# %% non-empty reply
+def validateservice(service: str, h: str, b: bytes) -> str:
     """
     splitlines is in case the ASCII/UTF8 response is less than 32 bytes,
     hoping server sends a \r\n
     """
-    u = b.splitlines()[0].decode('utf-8', 'ignore')
-    print('\n', u)
-
-
+    if not b:  # empty reply
+        return None
+# %% non-empty reply
+    svc_txt = b.splitlines()[0].decode('utf-8', 'ignore')
 # %% optional service validation
-    val = True
-    if service and service not in u.lower():
-        val = False
+    if service and service not in svc_txt.lower():
+        return None
 
-    return val
+    return svc_txt
 
 
 def netfromaddress(addr: ip.IPv4Address) -> ip.IPv4Network:

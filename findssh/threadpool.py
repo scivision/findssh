@@ -4,75 +4,55 @@ than the recommended asyncio coroutines in coro.py
 """
 import concurrent.futures
 import ipaddress as ip
-from typing import List
+import typing
 import itertools
+import logging
 import socket
 
-from .base import validateservice, getLANip, netfromaddress
+from .base import validateservice
 
 
-def isportopen(host: ip.IPv4Address, port: int, service: str,
-               timeout: float,
-               verbose: bool = True) -> bool:
+def isportopen(host: ip.IPv4Address,
+               port: int,
+               service: str,
+               timeout: float) -> typing.Tuple[ip.IPv4Address, str]:
     h = host.exploded
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(timeout)  # seconds
-        ret = s.connect_ex((h, port))
-
-        if ret:
-            return False
-
-        b = s.recv(32)  # arbitrary number of bytes
+        if s.connect_ex((h, port)):
+            return None
 # %% service decode (optional)
-    ok = validateservice(service, h, b)
-    if ok and verbose:
-        print('found', service, 'on', host, 'port', port)
+        svc_txt = validateservice(service, h, s.recv(32))
+    if svc_txt:
+        return host, svc_txt
+    return None
 
-    return ok
 
-
-def arbiter(net: ip.IPv4Network,
-            port: int, service: str,
-            timeout: float, debug: bool = False) -> List[ip.IPv4Address]:
+def get_hosts(net: ip.IPv4Network,
+              port: int,
+              service: str,
+              timeout: float,
+              debug: bool = False) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
     """
     loops over xxx.xxx.xxx.1-254
     IPv4 only. One thread per address.
     """
 
-    assert isinstance(net, ip.IPv4Network)
-
-    print('searching', net)
-
-    hosts = list(net.hosts())
+    hosts = net.hosts()
 
     if debug:
-        servers = [h for h in hosts if isportopen(h, port, service, timeout)]
+        servers = []
+        for host in hosts:
+            logging.debug(host)
+            result = isportopen(host, port, service, timeout)
+            if result is not None:
+                servers.append(result)
     else:
         with concurrent.futures.ThreadPoolExecutor(max_workers=100) as exc:
-            portsopen = exc.map(isportopen, hosts, itertools.repeat(port),
-                                itertools.repeat(service), itertools.repeat(timeout))
-            servers = list(itertools.compress(hosts, portsopen))
+            res = exc.map(isportopen, hosts, itertools.repeat(port),
+                          itertools.repeat(service), itertools.repeat(timeout))
+
+    servers = list(filter(None, res))
 
     return servers
-
-
-def main(net: ip.IPv4Network,
-         port: int, service: str,
-         timeout: float):
-
-    if not net:
-        ownip = getLANip()
-        print('own address', ownip)
-    elif isinstance(net, str):
-        ownip = ip.ip_address(net)
-    elif isinstance(net, (ip.IPv4Address, ip.IPv4Network)):
-        pass
-    else:
-        raise TypeError('unexpected input type {}'.format(type(net)))
-
-    if not isinstance(net, ip.IPv4Network):
-        net = netfromaddress(ownip)
-    print('searching', net)
-
-    return arbiter(net, port, service, timeout)

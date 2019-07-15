@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 import pytest
 import subprocess
+import ipaddress as ip
+
 import findssh
 import findssh.threadpool
-import ipaddress as ip
+from findssh.runner import runner
 
 PORT = 22
 SERVICE = ''
@@ -14,20 +16,22 @@ def test_script():
     subprocess.check_call(['findssh'])
 
 
-@pytest.mark.asyncio
-async def test_coroutine():
+def test_coroutine():
     net = findssh.netfromaddress(findssh.getLANip())
-    hosts = [host async for host in findssh.main(net, PORT, SERVICE, TIMEOUT)]
+    hosts = runner(findssh.get_hosts, net, PORT, SERVICE, TIMEOUT)
     if len(hosts) > 0:
-        assert isinstance(hosts[0], ip.IPv4Address)
+        host = hosts[0]
+        assert isinstance(host[0], ip.IPv4Address)
+        assert isinstance(host[1], str)
 
 
 def test_threadpool():
-    servers = findssh.threadpool.main(None, PORT, SERVICE, TIMEOUT)
-    try:
-        assert isinstance(servers[0], ip.IPv4Address)
-    except IndexError:
-        pytest.xfail('no servers found')
+    net = findssh.netfromaddress(findssh.getLANip())
+    hosts = findssh.threadpool.get_hosts(net, PORT, SERVICE, TIMEOUT)
+    if len(hosts) > 0:
+        host = hosts[0]
+        assert isinstance(host[0], ip.IPv4Address)
+        assert isinstance(host[1], str)
 
 
 if __name__ == '__main__':
