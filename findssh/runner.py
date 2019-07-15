@@ -1,3 +1,7 @@
+"""
+for asyncio.open_connection(), we do NOT use ProactorEventLoop for Windows.
+Hence the use of "use_run"
+"""
 import os
 import sys
 import asyncio
@@ -7,20 +11,13 @@ def runner(fun, *args):
     """
     Generic asyncio.run() equivalent for Python >= 3.5
     """
-    if os.name == 'nt' and (3, 7) <= sys.version_info < (3, 8):
-        asyncio.set_event_loop_policy(
-            asyncio.WindowsProactorEventLoopPolicy()  # type: ignore
-        )
+    use_run = ((os.name == 'nt' and (3, 8) > sys.version_info >= (3, 7)) or
+               (os.name != 'nt' and sys.version_info >= (3, 7)))
 
-    if sys.version_info >= (3, 7):
+    if use_run:
         result = asyncio.run(fun(*args))
-    else:
-        if os.name == 'nt':
-            loop = asyncio.ProactorEventLoop()
-        else:
-            loop = asyncio.new_event_loop()
-            asyncio.get_child_watcher().attach_loop(loop)
+    else:  # 3.8, 3.6, 3.5
+        loop = asyncio.SelectorEventLoop()
         result = loop.run_until_complete(fun(*args))
         loop.close()
-
     return result
