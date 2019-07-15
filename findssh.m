@@ -17,9 +17,8 @@ validateattributes(port, {'numeric'}, {'integer', 'nonnegative'})
 validateattributes(service, {'string', 'char'}, {'scalartext'})
 validateattributes(timeout, {'numeric'}, {'real', 'nonnegative'})
 
-% Matlab R2018b didn't like ThreadPoolExectutor
-servers = py.findssh.main('', port, service, timeout);
+net = py.findssh.netfromaddress(py.findssh.getLANip());
 
-hosts = cellfun(@char, cell(servers), 'uniformoutput', false);
+hosts = cell(py.findssh.threadpool.get_hosts(net, uint8(port), service, timeout));
 
 end
