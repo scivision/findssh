@@ -54,10 +54,11 @@ def main():
 
     if P.threadpool:
         hosts = threadpool.get_hosts(net, P.port, P.service, P.timeout)
-        for host, svc in hosts:
-            print(host, svc)
     else:
         hosts = runner(coro.get_hosts, net, P.port, P.service, P.timeout)
+
+    for host, svc in hosts:
+        print(host, svc)
 
 
 if __name__ == '__main__':

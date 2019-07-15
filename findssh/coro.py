@@ -26,30 +26,24 @@ async def get_hosts(net: ip.IPv4Network,
         net = netfromaddress(ownip)
 
     # print(list(net.hosts()))  # all the addresses to be pinged
-    hosts = await as_completed(net, port, service, timeout)
+    # hosts = await as_completed(net, port, service, timeout)
 
-    # futures = [isportopen(host, port, service) for host in net.hosts()]
-    # host_results = await asyncio.gather(*futures)
-    # hosts = list(filter(None, host_results))
+    futures = [waiter(host, port, service, timeout) for host in net.hosts()]
+    host_results = await asyncio.gather(*futures)
+
+    hosts = list(filter(None, host_results))
     return hosts
 
 
-async def as_completed(net: ip.IPv4Network,
-                       port: int,
-                       service: str,
-                       timeout: float) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
-    futures = [isportopen(host, port, service) for host in net.hosts()]
-    hosts = []
-    for future in asyncio.as_completed(futures, timeout=timeout):
-        try:
-            res = await future
-        except asyncio.TimeoutError:
-            continue
-
-        if res is not None:
-            print(*res)
-            hosts.append(res)
-    return hosts
+async def waiter(host: ip.IPv4Address,
+                 port: int,
+                 service: str,
+                 timeout: float) -> typing.Tuple[ip.IPv4Address, str]:
+    try:
+        res = await asyncio.wait_for(isportopen(host, port, service), timeout=timeout)
+    except asyncio.TimeoutError:
+        res = None
+    return res
 
 
 async def isportopen(host: ip.IPv4Address,
