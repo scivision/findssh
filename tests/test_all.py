@@ -8,12 +8,12 @@ import findssh.threadpool
 from findssh.runner import runner
 
 PORT = 22
-SERVICE = ''
+SERVICE = ""
 TIMEOUT = 1.0
 
 
 def test_script():
-    subprocess.check_call(['findssh'])
+    subprocess.check_call(["findssh"])
 
 
 def test_coroutine():
@@ -34,5 +34,5 @@ def test_threadpool():
         assert isinstance(host[1], str)
 
 
-if __name__ == '__main__':
-    pytest.main(['-xrsv', __file__])
+if __name__ == "__main__":
+    pytest.main(["-xrsv", __file__])

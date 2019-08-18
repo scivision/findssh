@@ -12,28 +12,25 @@ import socket
 from .base import validateservice
 
 
-def isportopen(host: ip.IPv4Address,
-               port: int,
-               service: str,
-               timeout: float) -> typing.Tuple[ip.IPv4Address, str]:
+def isportopen(
+    host: ip.IPv4Address, port: int, service: str, timeout: float
+) -> typing.Tuple[ip.IPv4Address, str]:
     h = host.exploded
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(timeout)  # seconds
         if s.connect_ex((h, port)):
             return None
-# %% service decode (optional)
+        # %% service decode (optional)
         svc_txt = validateservice(service, h, s.recv(32))
     if svc_txt:
         return host, svc_txt
     return None
 
 
-def get_hosts(net: ip.IPv4Network,
-              port: int,
-              service: str,
-              timeout: float,
-              debug: bool = False) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
+def get_hosts(
+    net: ip.IPv4Network, port: int, service: str, timeout: float, debug: bool = False
+) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
     """
     loops over xxx.xxx.xxx.1-254
     IPv4 only. One thread per address.
@@ -50,8 +47,13 @@ def get_hosts(net: ip.IPv4Network,
                 servers.append(result)
     else:
         with concurrent.futures.ThreadPoolExecutor(max_workers=100) as exc:
-            res = exc.map(isportopen, hosts, itertools.repeat(port),
-                          itertools.repeat(service), itertools.repeat(timeout))
+            res = exc.map(
+                isportopen,
+                hosts,
+                itertools.repeat(port),
+                itertools.repeat(service),
+                itertools.repeat(timeout),
+            )
 
     servers = list(filter(None, res))
 

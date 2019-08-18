@@ -5,10 +5,9 @@ import asyncio
 from findssh.coro import isportopen
 
 
-async def as_completed(net: ip.IPv4Network,
-                       port: int,
-                       service: str,
-                       timeout: float) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
+async def as_completed(
+    net: ip.IPv4Network, port: int, service: str, timeout: float
+) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
     futures = [isportopen(host, port, service) for host in net.hosts()]
     hosts = []
     for future in asyncio.as_completed(futures, timeout=timeout):

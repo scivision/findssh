@@ -28,16 +28,23 @@ TIMEOUT = 1.0
 
 
 def main():
-    p = ArgumentParser('scan for hosts with open port, without NMAP')
-    p.add_argument('-p', '--port', help='single port to try',
-                   default=PORT, type=int)
-    p.add_argument('-s', '--service', default='',
-                   help='string to match to qualify detections')
-    p.add_argument('-t', '--timeout', help='timeout to wait for server', type=float, default=TIMEOUT)
-    p.add_argument('-b', '--baseip', help='set a specific subnet to scan')
-    p.add_argument('-v', '--verbose', action='store_true')
-    p.add_argument('-threadpool', help='use threadpool instead of asyncio',
-                   action='store_true')
+    p = ArgumentParser("scan for hosts with open port, without NMAP")
+    p.add_argument("-p", "--port", help="single port to try", default=PORT, type=int)
+    p.add_argument(
+        "-s", "--service", default="", help="string to match to qualify detections"
+    )
+    p.add_argument(
+        "-t",
+        "--timeout",
+        help="timeout to wait for server",
+        type=float,
+        default=TIMEOUT,
+    )
+    p.add_argument("-b", "--baseip", help="set a specific subnet to scan")
+    p.add_argument("-v", "--verbose", action="store_true")
+    p.add_argument(
+        "-threadpool", help="use threadpool instead of asyncio", action="store_true"
+    )
     P = p.parse_args()
 
     if P.verbose:
@@ -45,12 +52,12 @@ def main():
 
     if not P.baseip:
         ownip = getLANip()
-        print('own address', ownip)
+        print("own address", ownip)
     else:
         ownip = ip.ip_address(P.baseip)
 
     net = netfromaddress(ownip)
-    print('searching', net)
+    print("searching", net)
 
     if P.threadpool:
         hosts = threadpool.get_hosts(net, P.port, P.service, P.timeout)
@@ -61,5 +68,5 @@ def main():
         print(host, svc)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
