@@ -22,7 +22,10 @@ def isportopen(
         if s.connect_ex((h, port)):
             return None
         # %% service decode (optional)
-        svc_txt = validateservice(service, h, s.recv(32))
+        try:
+            svc_txt = validateservice(service, h, s.recv(32))
+        except (socket.timeout, ConnectionError):
+            return None
     if svc_txt:
         return host, svc_txt
     return None

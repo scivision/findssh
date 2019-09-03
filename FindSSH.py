@@ -30,21 +30,13 @@ TIMEOUT = 1.0
 def main():
     p = ArgumentParser("scan for hosts with open port, without NMAP")
     p.add_argument("-p", "--port", help="single port to try", default=PORT, type=int)
+    p.add_argument("-s", "--service", default="", help="string to match to qualify detections")
     p.add_argument(
-        "-s", "--service", default="", help="string to match to qualify detections"
-    )
-    p.add_argument(
-        "-t",
-        "--timeout",
-        help="timeout to wait for server",
-        type=float,
-        default=TIMEOUT,
+        "-t", "--timeout", help="timeout to wait for server", type=float, default=TIMEOUT
     )
     p.add_argument("-b", "--baseip", help="set a specific subnet to scan")
     p.add_argument("-v", "--verbose", action="store_true")
-    p.add_argument(
-        "-threadpool", help="use threadpool instead of asyncio", action="store_true"
-    )
+    p.add_argument("-threadpool", help="use threadpool instead of asyncio", action="store_true")
     P = p.parse_args()
 
     if P.verbose:

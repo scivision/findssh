@@ -1,23 +1,18 @@
-#!/usr/bin/env python
-import pytest
-import subprocess
+"""
+normally we use coroutines, but for demo purposes we have threadpool too.
+"""
 import ipaddress
-
-import findssh
-from findssh.runner import runner
+import pytest
+import findssh.threadpool
 
 PORT = 22
 SERVICE = ""
 TIMEOUT = 1.0
 
 
-def test_script():
-    subprocess.check_call(["findssh"])
-
-
-def test_coroutine():
+def test_threadpool():
     net = findssh.netfromaddress(findssh.getLANip())
-    hosts = runner(findssh.get_hosts, net, PORT, SERVICE, TIMEOUT)
+    hosts = findssh.threadpool.get_hosts(net, PORT, SERVICE, TIMEOUT)
     if len(hosts) > 0:
         host = hosts[0]
         assert isinstance(host[0], ipaddress.IPv4Address)
