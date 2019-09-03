@@ -22,7 +22,7 @@ matrix:
     - pip install $(basename $TRAVIS_REPO_SLUG)[tests]
     script:
     - cd $HOME
-    - python -m pytest $TRAVIS_BUILD_DIR/tests
+    - python -m pytest $TRAVIS_BUILD_DIR/tests -r a -v
   - os: linux
     name: PEP8 MyPy Covs
     python: 3.7
@@ -31,11 +31,7 @@ matrix:
     - flake8
     - mypy .
     - pytest -r a -v
-    after_success:
-    - pytest --cov
-    - coveralls
 
 install: pip install -e .[tests]
 
 script: pytest -r a -v
-

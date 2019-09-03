@@ -1,8 +1,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1431634.svg)](https://doi.org/10.5281/zenodo.1431634)
+[![Actions Status](https://github.com/scivision/findssh/workflows/ci/badge.svg)](https://github.com/scivision/findssh/actions)
 
-[![Build Status](https://travis-ci.org/scivision/findssh.svg?branch=master)](https://travis-ci.org/scivision/findssh)
-[![Coverage percent](https://coveralls.io/repos/github/scivision/findssh/badge.svg?branch=master)](https://coveralls.io/github/scivision/findssh?branch=master)
-[![Build status](https://ci.appveyor.com/api/projects/status/jbwdfjqxxbugb20g?svg=true)](https://ci.appveyor.com/project/scivision/findssh)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/findssh.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/findssh/context:python)
 [![PyPi versions](https://img.shields.io/pypi/pyversions/findssh.svg)](https://pypi.python.org/pypi/findssh)
 [![Maintainability](https://api.codeclimate.com/v1/badges/c7409d3c78d12c3df14b/maintainability)](https://codeclimate.com/github/scivision/findssh/maintainability)
