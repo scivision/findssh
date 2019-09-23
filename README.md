@@ -15,8 +15,6 @@ The `asyncio` coroutine method uses ONE thread and is significantly *faster* tha
 
 Although speed advantages weren't seen in our testing, `findssh` works with PyPy as well.
 
-Matlab `findssh.m` works similarly.
-
 ## Install
 
 Just run `FindSSH.py` directly.
