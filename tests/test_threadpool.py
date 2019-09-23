@@ -12,11 +12,11 @@ TIMEOUT = 1.0
 
 def test_threadpool():
     net = findssh.netfromaddress(findssh.getLANip())
-    hosts = findssh.threadpool.get_hosts(net, PORT, SERVICE, TIMEOUT)
-    if len(hosts) > 0:
-        host = hosts[0]
-        assert isinstance(host[0], ipaddress.IPv4Address)
-        assert isinstance(host[1], str)
+    host_res = findssh.threadpool.get_hosts(net, PORT, SERVICE, TIMEOUT)
+    for host, svc in host_res:
+        assert isinstance(host, ipaddress.IPv4Address)
+        assert isinstance(svc, str)
+        break
 
 
 if __name__ == "__main__":

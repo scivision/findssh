@@ -5,21 +5,20 @@ than the recommended asyncio coroutines in coro.py
 import concurrent.futures
 import ipaddress as ip
 import typing
-import itertools
-import logging
 import socket
-
+import logging
 from .base import validateservice
 
 
-def isportopen(
-    host: ip.IPv4Address, port: int, service: str, timeout: float
-) -> typing.Tuple[ip.IPv4Address, str]:
+def isportopen(host: ip.IPv4Address, port: int, service: str, timeout: float) -> typing.Tuple[ip.IPv4Address, str]:
     h = host.exploded
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(timeout)  # seconds
-        if s.connect_ex((h, port)):
+        try:
+            if s.connect_ex((h, port)):
+                return None
+        except socket.gaierror:
             return None
         # %% service decode (optional)
         try:
@@ -33,31 +32,25 @@ def isportopen(
 
 def get_hosts(
     net: ip.IPv4Network, port: int, service: str, timeout: float, debug: bool = False
-) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
+) -> typing.Iterable[typing.Tuple[ip.IPv4Address, str]]:
     """
-    loops over xxx.xxx.xxx.1-254
-    IPv4 only. One thread per address.
+    loops over hosts in network
+    One thread per address.
+
+    IPv6 is not well supported, it will overwhelm RAM except by a plain for loop.
+    A different approach is needed to handle IPv6 scale, but it's fine for IPv4.
     """
 
-    hosts = net.hosts()
-
-    if debug:
-        servers = []
-        for host in hosts:
+    if debug or isinstance(net, ip.IPv6Network):
+        for host in net.hosts():
             logging.debug(host)
-            result = isportopen(host, port, service, timeout)
-            if result is not None:
-                servers.append(result)
+            res = isportopen(host, port, service, timeout)
+            if res:
+                yield res
     else:
         with concurrent.futures.ThreadPoolExecutor(max_workers=100) as exc:
-            res = exc.map(
-                isportopen,
-                hosts,
-                itertools.repeat(port),
-                itertools.repeat(service),
-                itertools.repeat(timeout),
-            )
-
-    servers = list(filter(None, res))
-
-    return servers
+            futures = (exc.submit(isportopen, host, port, service, timeout) for host in net.hosts())
+            for future in concurrent.futures.as_completed(futures):
+                res = future.result()
+                if res:
+                    yield res

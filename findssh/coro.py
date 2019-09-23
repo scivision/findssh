@@ -8,21 +8,10 @@ import ipaddress as ip
 import typing
 import asyncio
 
-from .base import validateservice, getLANip, netfromaddress
+from .base import validateservice
 
 
-async def get_hosts(
-    net: ip.IPv4Network, port: int, service: str, timeout: float
-) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
-
-    if not net:
-        ownip = getLANip()
-        print("own address", ownip)
-    elif isinstance(net, str):
-        ownip = ip.ip_address(net)
-
-    if not isinstance(net, ip.IPv4Network):
-        net = netfromaddress(ownip)
+async def get_hosts(net: ip.IPv4Network, port: int, service: str, timeout: float) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
 
     # print(list(net.hosts()))  # all the addresses to be pinged
     # hosts = await as_completed(net, port, service, timeout)
@@ -34,9 +23,7 @@ async def get_hosts(
     return hosts
 
 
-async def waiter(
-    host: ip.IPv4Address, port: int, service: str, timeout: float
-) -> typing.Tuple[ip.IPv4Address, str]:
+async def waiter(host: ip.IPv4Address, port: int, service: str, timeout: float) -> typing.Tuple[ip.IPv4Address, str]:
     try:
         res = await asyncio.wait_for(isportopen(host, port, service), timeout=timeout)
     except asyncio.TimeoutError:
@@ -44,9 +31,7 @@ async def waiter(
     return res
 
 
-async def isportopen(
-    host: ip.IPv4Address, port: int, service: str
-) -> typing.Tuple[ip.IPv4Address, str]:
+async def isportopen(host: ip.IPv4Address, port: int, service: str) -> typing.Tuple[ip.IPv4Address, str]:
     """
     https://docs.python.org/3/library/asyncio-stream.html#asyncio.open_connection
     """

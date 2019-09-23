@@ -35,6 +35,12 @@ def validateservice(service: str, h: str, b: bytes) -> str:
     return svc_txt
 
 
-def netfromaddress(addr: ip.IPv4Address) -> ip.IPv4Network:
+def netfromaddress(addr: ip.IPv4Address, mask: str = '24') -> ip.IPv4Network:
 
-    return ip.ip_network(addr.exploded.rsplit(".", 1)[0] + ".0/24")
+    if isinstance(addr, ip.IPv4Address):
+        net = ip.ip_network(addr.exploded.rsplit(".", 1)[0] + ".0/{}".format(mask))
+    elif isinstance(addr, ip.IPv6Address):
+        net = ip.ip_network(addr.exploded.rsplit(":", 1)[0] + ":0/{}".format(mask))
+    else:
+        raise TypeError(addr)
+    return net
