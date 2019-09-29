@@ -1,5 +1,5 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1431634.svg)](https://doi.org/10.5281/zenodo.1431634)
-[![Actions Status](https://github.com/scivision/findssh/workflows/ci/badge.svg)](https://github.com/scivision/findssh/actions)
+[![Actions Status](https://github.com/scivision/findssh/workflows/ci_python/badge.svg)](https://github.com/scivision/findssh/actions)
 
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/findssh.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/findssh/context:python)
 [![PyPi versions](https://img.shields.io/pypi/pyversions/findssh.svg)](https://pypi.python.org/pypi/findssh)
