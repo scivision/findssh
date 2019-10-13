@@ -16,7 +16,8 @@ R = Path(__file__).resolve().parents[1]
 
 
 def test_script():
-    subprocess.check_call([sys.executable, "FindSSH.py"], cwd=R)
+    subprocess.check_call([sys.executable, "FindSSH.py"], cwd=str(R))
+    # str() for py35
 
 
 def test_coroutine():
