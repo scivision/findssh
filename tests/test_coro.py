@@ -2,6 +2,8 @@
 import pytest
 import subprocess
 import ipaddress
+import sys
+from pathlib import Path
 
 import findssh
 from findssh.runner import runner
@@ -10,9 +12,11 @@ PORT = 22
 SERVICE = ""
 TIMEOUT = 1.0
 
+R = Path(__file__).resolve().parents[1]
+
 
 def test_script():
-    subprocess.check_call(["findssh"])
+    subprocess.check_call([sys.executable, "FindSSH.py"], cwd=R)
 
 
 def test_coroutine():
