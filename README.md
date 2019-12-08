@@ -1,4 +1,6 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1431634.svg)](https://doi.org/10.5281/zenodo.1431634)
+# Find SSH servers (without NMAP)
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3336467.svg)](https://doi.org/10.5281/zenodo.3336467)
 [![Actions Status](https://github.com/scivision/findssh/workflows/ci_python/badge.svg)](https://github.com/scivision/findssh/actions)
 
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/findssh.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/findssh/context:python)
@@ -6,9 +8,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/c7409d3c78d12c3df14b/maintainability)](https://codeclimate.com/github/scivision/findssh/maintainability)
 [![PyPi Download stats](http://pepy.tech/badge/findssh)](http://pepy.tech/project/findssh)
 
-# Find SSH servers (without NMAP)
-
-Platform-independently find SSH servers (or other services with open ports) on an IPv4 subnet, WITHOUT NMAP.
+Platform-independently find SSH servers (or other services with open ports) on an IPv4 subnet in pure Python WITHOUT NMAP.
 Scan entire IPv4 subnet in less than 1 second using Python standard library `asyncio`  coroutines and a single thread.
 
 The `asyncio` coroutine method uses ONE thread and is significantly *faster* than `concurrent.futures.ThreadPoolExecutor`, even (perhaps especially) with hundreds of threads in the ThreadPool.
@@ -20,20 +20,25 @@ Although speed advantages weren't seen in our testing, `findssh` works with PyPy
 Just run `FindSSH.py` directly.
 To allow use from other programs, you can install by:
 
-    pip install findssh
+```sh
+pip install findssh
+```
 
 or from this repo:
 
-    pip install -e .
+```sh
+git clone https://github.com/scivision/findssh
 
+pip install -e findssh
+```
 
 ## Usage
 
 from command line:
+
 ```sh
 findssh
 ```
-
 
 ### Command line options
 
