@@ -15,8 +15,9 @@ def runner(fun, *args):
 
     if use_run:
         result = asyncio.run(fun(*args))
-    else:  # 3.8, 3.6, 3.5
+    else:  # 3.8 windows, 3.6, 3.5
         loop = asyncio.SelectorEventLoop()
         result = loop.run_until_complete(fun(*args))
         loop.close()
+
     return result

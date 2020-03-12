@@ -35,7 +35,7 @@ def validateservice(service: str, h: str, b: bytes) -> str:
     return svc_txt
 
 
-def netfromaddress(addr: ip.IPv4Address, mask: str = '24') -> ip.IPv4Network:
+def netfromaddress(addr: ip.IPv4Address, mask: str = "24") -> ip.IPv4Network:
 
     if isinstance(addr, ip.IPv4Address):
         net = ip.ip_network(addr.exploded.rsplit(".", 1)[0] + ".0/{}".format(mask))
