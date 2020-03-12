@@ -5,8 +5,7 @@ on:
     paths:
       - "**.py"
   pull_request:
-    paths:
-      - "**.py"
+  release:
 
 jobs:
 
@@ -21,9 +20,13 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - run: pip install .[tests,lint]
+
     - run: flake8
     - run: mypy .
+
     - run: pytest
+    - run: findssh
+
 
   integration:
     runs-on: ${{ matrix.os }}
@@ -35,5 +38,8 @@ jobs:
     - uses: actions/setup-python@v1
       with:
         python-version: '3.x'
+
     - run: pip install .[tests]
+
     - run: pytest
+    - run: findssh

@@ -17,9 +17,6 @@ Although speed advantages weren't seen in our testing, `findssh` works with PyPy
 
 ## Install
 
-Just run `FindSSH.py` directly.
-To allow use from other programs, you can install by:
-
 ```sh
 pip install findssh
 ```
@@ -38,6 +35,12 @@ from command line:
 
 ```sh
 findssh
+```
+
+or
+
+```sh
+python -m findssh
 ```
 
 ### Command line options

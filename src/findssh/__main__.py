@@ -18,10 +18,10 @@ import logging
 import ipaddress as ip
 from argparse import ArgumentParser
 
-from findssh.base import getLANip, netfromaddress
-from findssh.runner import runner
-import findssh.coro as coro
-import findssh.threadpool as threadpool
+from .base import getLANip, netfromaddress
+from .runner import runner
+from .coro import get_hosts as coro_get_hosts
+from .threadpool import get_hosts as threadpool_get_hosts
 
 PORT = 22
 TIMEOUT = 1.0
@@ -50,9 +50,9 @@ def main():
     print("searching", net)
 
     if P.threadpool or isinstance(net, ip.IPv6Network):
-        hosts = threadpool.get_hosts(net, P.port, P.service, P.timeout, debug=P.verbose)
+        hosts = threadpool_get_hosts(net, P.port, P.service, P.timeout, debug=P.verbose)
     else:
-        hosts = runner(coro.get_hosts, net, P.port, P.service, P.timeout)
+        hosts = runner(coro_get_hosts, net, P.port, P.service, P.timeout)
 
     for host, svc in hosts:
         print(host, svc)
