@@ -40,7 +40,7 @@ async def isportopen(host: ip.IPv4Address, port: int, service: str) -> typing.Tu
     try:
         reader, _ = await asyncio.open_connection(host_str, port)
         b = await reader.read(32)  # arbitrary number of bytes
-    except (OSError, ConnectionError) as err:
+    except OSError as err:  # to avoid flake8 error OSError has ConnectionError
         logging.debug(err)
         return None
     # %% service decode (optional)

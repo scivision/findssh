@@ -24,7 +24,6 @@ jobs:
     - run: flake8
     - run: mypy .
     - run: pytest
-      working-directory: tests
 
   integration:
     runs-on: ${{ matrix.os }}
@@ -38,4 +37,3 @@ jobs:
         python-version: '3.x'
     - run: pip install .[tests]
     - run: pytest
-      working-directory: tests
