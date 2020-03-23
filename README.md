@@ -1,7 +1,7 @@
 # Find SSH servers (without NMAP)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3336467.svg)](https://doi.org/10.5281/zenodo.3336467)
-[![Actions Status](https://github.com/scivision/findssh/workflows/ci_python/badge.svg)](https://github.com/scivision/findssh/actions)
+![ci](https://github.com/scivision/findssh/workflows/ci_python/badge.svg)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/findssh.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/findssh/context:python)
 [![PyPi versions](https://img.shields.io/pypi/pyversions/findssh.svg)](https://pypi.python.org/pypi/findssh)
 [![PyPi Download stats](http://pepy.tech/badge/findssh)](http://pepy.tech/project/findssh)
