@@ -4,8 +4,6 @@ on:
   push:
     paths:
       - "**.py"
-  pull_request:
-  release:
 
 jobs:
 
