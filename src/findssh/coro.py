@@ -11,7 +11,9 @@ import asyncio
 from .base import validateservice
 
 
-async def get_hosts(net: ip.IPv4Network, port: int, service: str, timeout: float) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
+async def get_hosts(
+    net: ip.IPv4Network, port: int, service: str, timeout: float
+) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
 
     # print(list(net.hosts()))  # all the addresses to be pinged
     # hosts = await as_completed(net, port, service, timeout)
@@ -23,7 +25,9 @@ async def get_hosts(net: ip.IPv4Network, port: int, service: str, timeout: float
     return hosts
 
 
-async def waiter(host: ip.IPv4Address, port: int, service: str, timeout: float) -> typing.Tuple[ip.IPv4Address, str]:
+async def waiter(
+    host: ip.IPv4Address, port: int, service: str, timeout: float
+) -> typing.Tuple[ip.IPv4Address, str]:
     try:
         res = await asyncio.wait_for(isportopen(host, port, service), timeout=timeout)
     except asyncio.TimeoutError:
@@ -31,7 +35,9 @@ async def waiter(host: ip.IPv4Address, port: int, service: str, timeout: float) 
     return res
 
 
-async def isportopen(host: ip.IPv4Address, port: int, service: str) -> typing.Tuple[ip.IPv4Address, str]:
+async def isportopen(
+    host: ip.IPv4Address, port: int, service: str
+) -> typing.Tuple[ip.IPv4Address, str]:
     """
     https://docs.python.org/3/library/asyncio-stream.html#asyncio.open_connection
     """

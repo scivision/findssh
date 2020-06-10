@@ -1,4 +1,4 @@
-name: ci_python
+name: ci
 
 on:
   push:
@@ -14,13 +14,13 @@ jobs:
         python-version: [3.5, '3.x']
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
+    - uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - run: pip install .[tests,lint]
 
     - run: flake8
-    - run: mypy .
+    - run: mypy . src
 
     - run: pytest
     - run: findssh
@@ -33,7 +33,7 @@ jobs:
         os: [windows-latest, macos-latest]
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
+    - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
 

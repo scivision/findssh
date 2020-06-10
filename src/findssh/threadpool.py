@@ -10,7 +10,9 @@ import logging
 from .base import validateservice
 
 
-def isportopen(host: ip.IPv4Address, port: int, service: str, timeout: float) -> typing.Tuple[ip.IPv4Address, str]:
+def isportopen(
+    host: ip.IPv4Address, port: int, service: str, timeout: float
+) -> typing.Tuple[ip.IPv4Address, str]:
     h = host.exploded
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
