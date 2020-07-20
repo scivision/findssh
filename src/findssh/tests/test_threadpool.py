@@ -2,7 +2,7 @@
 normally we use coroutines, but for demo purposes we have threadpool too.
 """
 import ipaddress
-import pytest
+
 import findssh.threadpool
 
 PORT = 22
@@ -17,7 +17,3 @@ def test_threadpool():
         assert isinstance(host, ipaddress.IPv4Address)
         assert isinstance(svc, str)
         break
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

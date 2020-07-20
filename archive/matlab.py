@@ -19,7 +19,3 @@ def test_matlab():
         [matlab, "-batch", "findssh"], universal_newlines=True, timeout=60
     )
     print(ret)
-
-
-if __name__ == "__main__":
-    pytest.main(["-s", __file__])

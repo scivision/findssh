@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import pytest
 import ipaddress
 
 import findssh
@@ -16,7 +15,3 @@ def test_coroutine():
         host = hosts[0]
         assert isinstance(host[0], ipaddress.IPv4Address)
         assert isinstance(host[1], str)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])
