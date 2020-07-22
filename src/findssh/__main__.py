@@ -12,8 +12,8 @@ Note:
 timeout value bare minimum is 0.15 seconds for LAN,
 suggest using higher values say 0.25 or 0.35 to allow for network / CPU delays
 Wifi timeout should be 1 second or more
-
 """
+
 import logging
 import ipaddress as ip
 from argparse import ArgumentParser
