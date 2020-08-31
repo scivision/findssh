@@ -1,3 +1,5 @@
+archive/* linguist-vendored
+
 .gitattributes text eol=lf
 .gitignore text eol=lf
 Makefile text eol=lf
