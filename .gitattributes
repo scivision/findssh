@@ -1,4 +1,4 @@
-archive/* linguist-vendored
+.archive/* linguist-vendored
 
 .gitattributes text eol=lf
 .gitignore text eol=lf
