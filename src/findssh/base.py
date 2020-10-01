@@ -1,5 +1,6 @@
 import ipaddress as ip
 import socket
+import typing as T
 
 
 def getLANip() -> ip.IPv4Address:
@@ -44,3 +45,42 @@ def netfromaddress(addr: ip.IPv4Address, mask: str = "24") -> ip.IPv4Network:
     else:
         raise TypeError(addr)
     return net
+
+
+def isportopen(
+    host: ip.IPv4Address, port: int, service: str, timeout: float
+) -> T.Tuple[ip.IPv4Address, str]:
+    """
+    is a port open? Without coroutines.
+    """
+
+    h = host.exploded
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(timeout)  # seconds
+        try:
+            if s.connect_ex((h, port)):
+                return None
+        except socket.gaierror:
+            return None
+        # %% service decode (optional)
+        try:
+            svc_txt = validateservice(service, h, s.recv(32))
+        except (socket.timeout, ConnectionError):
+            return None
+    if svc_txt:
+        return host, svc_txt
+    return None
+
+
+def get_hosts_seq(
+    net: ip.IPv4Network, port: int, service: str, timeout: float
+) -> T.Iterable[T.Tuple[ip.IPv4Address, str]]:
+    """
+    find hosts sequentially (no parallelism or concurrency)
+    """
+
+    for host in net.hosts():
+        res = isportopen(host, port, service, timeout)
+        if res:
+            yield res
