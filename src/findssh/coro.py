@@ -15,13 +15,13 @@ async def get_hosts(
     net: ip.IPv4Network, port: int, service: str, timeout: float
 ) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
 
-    # print(list(net.hosts()))  # all the addresses to be pinged
-    # hosts = await as_completed(net, port, service, timeout)
+    hosts = []
+    for h in asyncio.as_completed([waiter(host, port, service, timeout) for host in net.hosts()]):
+        host = await h
+        if host:
+            print(host)
+            hosts.append(host)
 
-    futures = [waiter(host, port, service, timeout) for host in net.hosts()]
-    host_results = await asyncio.gather(*futures)
-
-    hosts = list(filter(None, host_results))
     return hosts
 
 

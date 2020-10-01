@@ -14,6 +14,7 @@ suggest using higher values say 0.25 or 0.35 to allow for network / CPU delays
 Wifi timeout should be 1 second or more
 """
 
+import os
 import asyncio
 import logging
 import ipaddress as ip
@@ -54,10 +55,11 @@ def main():
     if P.threadpool or isinstance(net, ip.IPv6Network):
         hosts = threadpool_get_hosts(net, P.port, P.service, P.timeout, debug=P.verbose)
     else:
+        if os.name == "nt":
+            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
         hosts = asyncio.run(coro_get_hosts(net, P.port, P.service, P.timeout))
 
-    for host, svc in hosts:
-        print(host, svc)
+    return hosts
 
 
 if __name__ == "__main__":
