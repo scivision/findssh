@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 scans IPv4 subnet for SSH servers on Port 22 or other server ports.
 Useful for machines that don't/can't have NMAP installed (e.g. Windows),
@@ -14,12 +14,12 @@ suggest using higher values say 0.25 or 0.35 to allow for network / CPU delays
 Wifi timeout should be 1 second or more
 """
 
+import asyncio
 import logging
 import ipaddress as ip
 from argparse import ArgumentParser
 
 from .base import getLANip, netfromaddress
-from .runner import runner
 from .coro import get_hosts as coro_get_hosts
 from .threadpool import get_hosts as threadpool_get_hosts
 
@@ -54,7 +54,7 @@ def main():
     if P.threadpool or isinstance(net, ip.IPv6Network):
         hosts = threadpool_get_hosts(net, P.port, P.service, P.timeout, debug=P.verbose)
     else:
-        hosts = runner(coro_get_hosts, net, P.port, P.service, P.timeout)
+        hosts = asyncio.run(coro_get_hosts(net, P.port, P.service, P.timeout))
 
     for host, svc in hosts:
         print(host, svc)

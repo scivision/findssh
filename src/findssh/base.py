@@ -38,9 +38,9 @@ def validateservice(service: str, h: str, b: bytes) -> str:
 def netfromaddress(addr: ip.IPv4Address, mask: str = "24") -> ip.IPv4Network:
 
     if isinstance(addr, ip.IPv4Address):
-        net = ip.ip_network(addr.exploded.rsplit(".", 1)[0] + ".0/{}".format(mask))
+        net = ip.ip_network(addr.exploded.rsplit(".", 1)[0] + f".0/{mask}")
     elif isinstance(addr, ip.IPv6Address):
-        net = ip.ip_network(addr.exploded.rsplit(":", 1)[0] + ":0/{}".format(mask))
+        net = ip.ip_network(addr.exploded.rsplit(":", 1)[0] + f":0/{mask}")
     else:
         raise TypeError(addr)
     return net
