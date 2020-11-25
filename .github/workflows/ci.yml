@@ -21,13 +21,14 @@ jobs:
     - run: pip install .[tests,lint]
 
     - run: flake8
-    - run: mypy . src
+    - run: mypy
 
     - run: pytest
     - run: findssh
 
 
   integration:
+    needs: linux
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
