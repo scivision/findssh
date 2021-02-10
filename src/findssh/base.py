@@ -1,3 +1,4 @@
+from __future__ import annotations
 import ipaddress as ip
 import socket
 import typing as T
@@ -49,7 +50,7 @@ def netfromaddress(addr: ip.IPv4Address, mask: str = "24") -> ip.IPv4Network:
 
 def isportopen(
     host: ip.IPv4Address, port: int, service: str, timeout: float
-) -> T.Tuple[ip.IPv4Address, str]:
+) -> tuple[ip.IPv4Address, str]:
     """
     is a port open? Without coroutines.
     """
@@ -75,7 +76,7 @@ def isportopen(
 
 def get_hosts_seq(
     net: ip.IPv4Network, port: int, service: str, timeout: float
-) -> T.Iterable[T.Tuple[ip.IPv4Address, str]]:
+) -> T.Iterable[tuple[ip.IPv4Address, str]]:
     """
     find hosts sequentially (no parallelism or concurrency)
     """

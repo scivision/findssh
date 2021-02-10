@@ -3,9 +3,10 @@ this method uses Python asyncio coroutines and is significantly faster and leane
 here using only ONE thread total, instead of the slower one-thread-per-address
 threadpool.py method
 """
+
+from __future__ import annotations
 import logging
 import ipaddress as ip
-import typing
 import asyncio
 
 from .base import validateservice
@@ -13,7 +14,7 @@ from .base import validateservice
 
 async def get_hosts(
     net: ip.IPv4Network, port: int, service: str, timeout: float
-) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
+) -> list[tuple[ip.IPv4Address, str]]:
 
     hosts = []
     for h in asyncio.as_completed([waiter(host, port, service, timeout) for host in net.hosts()]):
@@ -27,7 +28,7 @@ async def get_hosts(
 
 async def waiter(
     host: ip.IPv4Address, port: int, service: str, timeout: float
-) -> typing.Tuple[ip.IPv4Address, str]:
+) -> tuple[ip.IPv4Address, str]:
     try:
         res = await asyncio.wait_for(isportopen(host, port, service), timeout=timeout)
     except asyncio.TimeoutError:
@@ -37,7 +38,7 @@ async def waiter(
 
 async def isportopen(
     host: ip.IPv4Address, port: int, service: str
-) -> typing.Tuple[ip.IPv4Address, str]:
+) -> tuple[ip.IPv4Address, str]:
     """
     https://docs.python.org/3/library/asyncio-stream.html#asyncio.open_connection
     """
