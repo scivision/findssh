@@ -5,8 +5,8 @@ import typing as T
 
 
 def getLANip() -> ip.IPv4Address:
-    """ get IP of own interface
-     ref: http://stackoverflow.com/a/23822431
+    """get IP of own interface
+    ref: http://stackoverflow.com/a/23822431
     """
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)

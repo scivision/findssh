@@ -36,9 +36,7 @@ async def waiter(
     return res
 
 
-async def isportopen(
-    host: ip.IPv4Address, port: int, service: str
-) -> tuple[ip.IPv4Address, str]:
+async def isportopen(host: ip.IPv4Address, port: int, service: str) -> tuple[ip.IPv4Address, str]:
     """
     https://docs.python.org/3/library/asyncio-stream.html#asyncio.open_connection
     """
