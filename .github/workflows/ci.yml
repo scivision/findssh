@@ -3,43 +3,39 @@ name: ci
 on:
   push:
     paths:
-      - "**.py"
-      - .github/workflows/ci.yml
+    - "**.py"
+    - .github/workflows/ci.yml
 
 jobs:
 
-  linux:
-    runs-on: windows-latest
+  ci:
+    timeout-minutes: 15
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [3.7, 3.x]
+        python-version: ["3.7", "3.x"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
     - run: pip install .[tests,lint]
 
-    - run: flake8
-    - run: mypy
+    - name: syntax check
+      timeout-minutes: 1
+      if: startsWith(matrix.os,'ubuntu')
+      run: flake8
+
+    - name: type annotation check
+      timeout-minutes: 10
+      if: startsWith(matrix.os,'ubuntu')
+      run: mypy
 
     - run: pytest
+      timeout-minutes: 2
+
     - run: findssh
-
-
-  integration:
-    needs: linux
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-
-    - run: pip install .[tests]
-
-    - run: pytest
-    - run: findssh
+      timeout-minutes: 1
