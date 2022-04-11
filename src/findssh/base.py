@@ -4,7 +4,7 @@ import socket
 import typing as T
 
 
-def getLANip() -> ip.IPv4Address:
+def getLANip() -> ip.IPv4Address | ip.IPv6Address:
     """get IP of own interface
     ref: http://stackoverflow.com/a/23822431
     """
@@ -37,7 +37,7 @@ def validateservice(service: str, h: str, b: bytes) -> str:
     return svc_txt
 
 
-def netfromaddress(addr: ip.IPv4Address, mask: str = "24") -> ip.IPv4Network:
+def netfromaddress(addr: ip.IPv4Address, mask: str = "24") -> ip.IPv4Network | ip.IPv6Network:
 
     if isinstance(addr, ip.IPv4Address):
         net = ip.ip_network(addr.exploded.rsplit(".", 1)[0] + f".0/{mask}")
@@ -45,6 +45,7 @@ def netfromaddress(addr: ip.IPv4Address, mask: str = "24") -> ip.IPv4Network:
         net = ip.ip_network(addr.exploded.rsplit(":", 1)[0] + f":0/{mask}")
     else:
         raise TypeError(addr)
+
     return net
 
 

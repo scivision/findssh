@@ -6,8 +6,6 @@ Useful for machines that don't/can't have NMAP installed (e.g. Windows),
 I wanted to make it as cross-platform as possible,
   where the user would have only basic Python installed (Windows)
 
-Michael Hirsch, Ph.D.
-
 Note:
 timeout value bare minimum is 0.15 seconds for LAN,
 suggest using higher values say 0.25 or 0.35 to allow for network / CPU delays
