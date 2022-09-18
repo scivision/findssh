@@ -50,7 +50,7 @@ def netfromaddress(addr: ip.IPv4Address, mask: str = "24") -> ip.IPv4Network | i
 
 
 def isportopen(
-    host: ip.IPv4Address, port: int, service: str, timeout: float
+    host: ip.IPv4Address | ip.IPv6Address, port: int, service: str, timeout: float
 ) -> tuple[ip.IPv4Address, str]:
     """
     is a port open? Without coroutines.
@@ -75,8 +75,8 @@ def isportopen(
     return None
 
 
-def get_hosts_seq(
-    net: ip.IPv4Network, port: int, service: str, timeout: float
+def get_hosts(
+    net: ip.IPv4Network | ip.IPv6Network, port: int, service: str, timeout: float
 ) -> T.Iterable[tuple[ip.IPv4Address, str]]:
     """
     find hosts sequentially (no parallelism or concurrency)

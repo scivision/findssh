@@ -14,10 +14,10 @@ Wifi timeout should be 1 second or more
 
 import asyncio
 import logging
-import ipaddress as ip
+import ipaddress
 from argparse import ArgumentParser
 
-from .base import getLANip, netfromaddress, get_hosts_seq
+from .base import getLANip, netfromaddress, get_hosts as get_hosts_seq
 from .coro import get_hosts as coro_get_hosts
 from .threadpool import get_hosts as threadpool_get_hosts
 
@@ -28,7 +28,7 @@ TIMEOUT = 1.0
 def main():
     p = ArgumentParser("scan for hosts with open port, without NMAP")
     p.add_argument("-p", "--port", help="single port to try", default=PORT, type=int)
-    p.add_argument("-s", "--service", default="", help="string to match to qualify detections")
+    p.add_argument("-s", "--service", help="string to match to qualify detections")
     p.add_argument(
         "-t", "--timeout", help="timeout to wait for server", type=float, default=TIMEOUT
     )
@@ -40,18 +40,14 @@ def main():
     if P.verbose:
         logging.basicConfig(level=logging.DEBUG)
 
-    if not P.baseip:
-        ownip = getLANip()
-        print("own address", ownip)
-    else:
-        ownip = ip.ip_address(P.baseip)
+    ownip = ipaddress.ip_address(P.baseip) if P.baseip else getLANip()
 
     net = netfromaddress(ownip)
     print("searching", net)
 
     if P.threadpool:
         threadpool_get_hosts(net, P.port, P.service, P.timeout)
-    elif isinstance(net, ip.IPv6Network):
+    elif isinstance(net, ipaddress.IPv6Network):
         get_hosts_seq(net, P.port, P.service, P.timeout)
     else:
         asyncio.run(coro_get_hosts(net, P.port, P.service, P.timeout))
