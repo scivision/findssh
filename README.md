@@ -12,7 +12,6 @@ The `asyncio` coroutine method uses ONE thread and is significantly *faster* tha
 
 Although speed advantages weren't seen in our testing, `findssh` works with PyPy as well.
 
-
 ```sh
 pip install findssh
 ```
@@ -28,12 +27,6 @@ pip install -e findssh
 ## Usage
 
 from command line:
-
-```sh
-findssh
-```
-
-or
 
 ```sh
 python -m findssh

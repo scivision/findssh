@@ -1,5 +1,37 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=61.0.0", "wheel"]
+
+[project]
+name = "findssh"
+version = "1.5.0"
+description = "find open servers on IPv4 subnet such as SSH"
+keywords = ["port-scan", "ssh"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Framework :: AsyncIO",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Education",
+  "Intended Audience :: End Users/Desktop",
+  "Intended Audience :: Information Technology",
+  "Intended Audience :: System Administrators",
+  "Intended Audience :: Telecommunications Industry",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Topic :: Security",
+  "Topic :: System :: Networking",
+  "Topic :: Utilities"
+]
+license = {file = "LICENSE.txt"}
+dynamic = ["readme"]
+requires-python = ">=3.7"
+
+[project.optional-dependencies]
+tests = ["pytest"]
+lint = ["flake8", "flake8-bugbear", "flake8-builtins", "flake8-blind-except", "mypy"]
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.md"]}
 
 [tool.mypy]
 files = ["src"]
