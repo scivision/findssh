@@ -16,13 +16,13 @@ classifiers = [
   "Intended Audience :: Information Technology",
   "Intended Audience :: System Administrators",
   "Intended Audience :: Telecommunications Industry",
+  "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
   "Topic :: Security",
   "Topic :: System :: Networking",
   "Topic :: Utilities"
 ]
-license = {file = "LICENSE.txt"}
 dynamic = ["readme"]
 requires-python = ">=3.7"
 
@@ -31,15 +31,14 @@ tests = ["pytest"]
 lint = ["flake8", "flake8-bugbear", "flake8-builtins", "flake8-blind-except", "mypy"]
 
 [tool.setuptools.dynamic]
-readme = {file = ["README.md"]}
+readme = {file = ["README.md"], content-type = "text/markdown"}
+
+[tool.black]
+line-length = 100
 
 [tool.mypy]
 files = ["src"]
-
 strict_optional = false
 allow_redefinition = true
 show_error_context = false
 show_column_numbers = true
-
-[tool.black]
-line-length = 100
