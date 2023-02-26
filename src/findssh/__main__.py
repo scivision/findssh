@@ -17,7 +17,7 @@ import logging
 import ipaddress as ip
 from argparse import ArgumentParser
 
-from .base import getLANip, netfromaddress, get_hosts_seq
+from . import get_lan_ip, address2net
 from . import coro
 from . import threadpool
 
@@ -32,7 +32,11 @@ def main():
         "-s", "--service", default="", help="string to match to qualify detections"
     )
     p.add_argument(
-        "-t", "--timeout", help="timeout to wait for server", type=float, default=TIMEOUT
+        "-t",
+        "--timeout",
+        help="timeout to wait for server. Must be finite or will hang.",
+        type=float,
+        default=TIMEOUT,
     )
     p.add_argument("-b", "--baseip", help="set a specific subnet to scan")
     p.add_argument("-v", "--verbose", action="store_true")
@@ -45,21 +49,24 @@ def main():
         logging.basicConfig(level=logging.DEBUG)
 
     if not P.baseip:
-        ownip = getLANip()
+        ownip = get_lan_ip()
         print("own address", ownip)
     else:
         ownip = ip.ip_address(P.baseip)
 
-    net = netfromaddress(ownip)
+    net = address2net(ownip)
     print("searching", net)
 
     if P.threadpool:
-        for host in threadpool.get_hosts(net, P.port, P.service, P.timeout):
+        for host in threadpool.get_hosts(
+            net,
+            P.port,
+            P.timeout,
+            P.service,
+        ):
             print(host)
-    elif isinstance(net, ip.IPv6Network):
-        get_hosts_seq(net, P.port, P.service, P.timeout)
     else:
-        asyncio.run(coro.get_hosts(net, P.port, P.service, P.timeout))
+        asyncio.run(coro.get_hosts(net, P.port, P.timeout, P.service))
 
 
 if __name__ == "__main__":

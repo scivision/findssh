@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "findssh"
-version = "1.6.0"
+version = "2.0.0"
 description = "find open servers on IPv4 subnet such as SSH"
 keywords = ["port-scan", "ssh"]
 classifiers = [

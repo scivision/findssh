@@ -2,13 +2,13 @@ import ipaddress as ip
 import typing
 import asyncio
 
-from findssh.coro import isportopen
+from findssh.coro import is_port_open
 
 
 async def as_completed(
     net: ip.IPv4Network, port: int, service: str, timeout: float
 ) -> typing.List[typing.Tuple[ip.IPv4Address, str]]:
-    futures = [isportopen(host, port, service) for host in net.hosts()]
+    futures = [is_port_open(host, port, service) for host in net.hosts()]
     hosts = []
     for future in asyncio.as_completed(futures, timeout=timeout):
         try:

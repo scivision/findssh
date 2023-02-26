@@ -17,7 +17,7 @@ validateattributes(port, {'numeric'}, {'integer', 'nonnegative'})
 validateattributes(service, {'string', 'char'}, {'scalartext'})
 validateattributes(timeout, {'numeric'}, {'real', 'nonnegative'})
 
-net = py.findssh.netfromaddress(py.findssh.getLANip());
+net = py.findssh.address2net(py.findssh.get_lan_ip());
 
 hosts = cell(py.findssh.threadpool.get_hosts(net, uint8(port), service, timeout));
 
