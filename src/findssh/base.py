@@ -37,7 +37,9 @@ def validateservice(service: str, h: str, b: bytes) -> str:
     return svc_txt
 
 
-def netfromaddress(addr: ip.IPv4Address, mask: str = "24") -> ip.IPv4Network | ip.IPv6Network:
+def netfromaddress(
+    addr: ip.IPv4Address, mask: str = "24"
+) -> ip.IPv4Network | ip.IPv6Network:
 
     if isinstance(addr, ip.IPv4Address):
         net = ip.ip_network(addr.exploded.rsplit(".", 1)[0] + f".0/{mask}")
@@ -67,11 +69,11 @@ def isportopen(
             return None
         # %% service decode (optional)
         try:
-            svc_txt = validateservice(service, h, s.recv(32))
+            if svc_txt := validateservice(service, h, s.recv(32)):
+                return host, svc_txt
         except (socket.timeout, ConnectionError):
             return None
-    if svc_txt:
-        return host, svc_txt
+
     return None
 
 

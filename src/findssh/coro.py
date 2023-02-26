@@ -17,9 +17,10 @@ async def get_hosts(
 ) -> list[tuple[ip.IPv4Address, str]]:
 
     hosts = []
-    for h in asyncio.as_completed([waiter(host, port, service, timeout) for host in net.hosts()]):
-        host = await h
-        if host:
+    for h in asyncio.as_completed(
+        [waiter(host, port, service, timeout) for host in net.hosts()]
+    ):
+        if host := await h:
             print(host)
             hosts.append(host)
 
@@ -36,7 +37,9 @@ async def waiter(
     return res
 
 
-async def isportopen(host: ip.IPv4Address, port: int, service: str) -> tuple[ip.IPv4Address, str]:
+async def isportopen(
+    host: ip.IPv4Address, port: int, service: str
+) -> tuple[ip.IPv4Address, str]:
     """
     https://docs.python.org/3/library/asyncio-stream.html#asyncio.open_connection
     """
@@ -49,7 +52,6 @@ async def isportopen(host: ip.IPv4Address, port: int, service: str) -> tuple[ip.
         logging.debug(err)
         return None
     # %% service decode (optional)
-    svc_txt = validateservice(service, host_str, b)
-    if svc_txt:
+    if svc_txt := validateservice(service, host_str, b):
         return host, svc_txt
     return None

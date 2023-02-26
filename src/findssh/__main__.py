@@ -18,7 +18,7 @@ import ipaddress as ip
 from argparse import ArgumentParser
 
 from .base import getLANip, netfromaddress, get_hosts_seq
-from .coro import get_hosts as coro_get_hosts
+from . import coro
 from . import threadpool
 
 PORT = 22
@@ -28,13 +28,17 @@ TIMEOUT = 1.0
 def main():
     p = ArgumentParser("scan for hosts with open port, without NMAP")
     p.add_argument("-p", "--port", help="single port to try", default=PORT, type=int)
-    p.add_argument("-s", "--service", default="", help="string to match to qualify detections")
+    p.add_argument(
+        "-s", "--service", default="", help="string to match to qualify detections"
+    )
     p.add_argument(
         "-t", "--timeout", help="timeout to wait for server", type=float, default=TIMEOUT
     )
     p.add_argument("-b", "--baseip", help="set a specific subnet to scan")
     p.add_argument("-v", "--verbose", action="store_true")
-    p.add_argument("-threadpool", help="use threadpool instead of asyncio", action="store_true")
+    p.add_argument(
+        "-threadpool", help="use threadpool instead of asyncio", action="store_true"
+    )
     P = p.parse_args()
 
     if P.verbose:
@@ -55,7 +59,7 @@ def main():
     elif isinstance(net, ip.IPv6Network):
         get_hosts_seq(net, P.port, P.service, P.timeout)
     else:
-        asyncio.run(coro_get_hosts(net, P.port, P.service, P.timeout))
+        asyncio.run(coro.get_hosts(net, P.port, P.service, P.timeout))
 
 
 if __name__ == "__main__":

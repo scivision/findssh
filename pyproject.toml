@@ -35,7 +35,7 @@ lint = ["flake8", "flake8-bugbear", "flake8-builtins", "flake8-blind-except", "m
 readme = {file = ["README.md"], content-type = "text/markdown"}
 
 [tool.black]
-line-length = 100
+line-length = 90
 
 [tool.mypy]
 files = ["src"]

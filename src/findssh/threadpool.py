@@ -21,7 +21,10 @@ def get_hosts(
 
     with concurrent.futures.ThreadPoolExecutor() as exc:
         try:
-            futures = (exc.submit(isportopen, host, port, service, timeout) for host in net.hosts())
+            futures = (
+                exc.submit(isportopen, host, port, service, timeout)
+                for host in net.hosts()
+            )
             for future in concurrent.futures.as_completed(futures):
                 if res := future.result():
                     yield res
