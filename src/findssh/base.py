@@ -83,6 +83,5 @@ def get_hosts_seq(
     """
 
     for host in net.hosts():
-        res = isportopen(host, port, service, timeout)
-        if res:
+        if res := isportopen(host, port, service, timeout):
             yield res

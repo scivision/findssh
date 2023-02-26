@@ -19,7 +19,7 @@ from argparse import ArgumentParser
 
 from .base import getLANip, netfromaddress, get_hosts_seq
 from .coro import get_hosts as coro_get_hosts
-from .threadpool import get_hosts as threadpool_get_hosts
+from . import threadpool
 
 PORT = 22
 TIMEOUT = 1.0
@@ -50,7 +50,8 @@ def main():
     print("searching", net)
 
     if P.threadpool:
-        threadpool_get_hosts(net, P.port, P.service, P.timeout)
+        for host in threadpool.get_hosts(net, P.port, P.service, P.timeout):
+            print(host)
     elif isinstance(net, ip.IPv6Network):
         get_hosts_seq(net, P.port, P.service, P.timeout)
     else:

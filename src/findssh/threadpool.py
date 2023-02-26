@@ -19,9 +19,12 @@ def get_hosts(
     One thread per address.
     """
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as exc:
-        futures = (exc.submit(isportopen, host, port, service, timeout) for host in net.hosts())
-        for future in concurrent.futures.as_completed(futures):
-            res = future.result()
-            if res:
-                yield res
+    with concurrent.futures.ThreadPoolExecutor() as exc:
+        try:
+            futures = (exc.submit(isportopen, host, port, service, timeout) for host in net.hosts())
+            for future in concurrent.futures.as_completed(futures):
+                if res := future.result():
+                    yield res
+        except KeyboardInterrupt:
+            print("KeyboardInterrupt")
+            exc.shutdown(wait=True, cancel_futures=True)
