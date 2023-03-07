@@ -7,15 +7,11 @@ function hosts = findssh(port, service, timeout)
 % example (find all SSH servers on IPv4 subnet on Port 22):
 %   findssh()
 
-assert(~verLessThan('matlab', '8.4'), 'Matlab >= R2014b required')
-
-if nargin < 1, port=22; end
-if nargin < 2, service = ''; end
-if nargin < 3, timeout = 0.1; end
-
-validateattributes(port, {'numeric'}, {'integer', 'nonnegative'})
-validateattributes(service, {'string', 'char'}, {'scalartext'})
-validateattributes(timeout, {'numeric'}, {'real', 'nonnegative'})
+arguments
+    port (1,1) {mustBeInteger, mustBePositive} = 22
+    service (1,1) string = ""
+    timeout (1,1) {mustBeReal, mustBePositive} = 0.1
+end
 
 net = py.findssh.address2net(py.findssh.get_lan_ip());
 

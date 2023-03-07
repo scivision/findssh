@@ -25,9 +25,8 @@ async def get_hosts(
     """
 
     hosts = []
-    for h in asyncio.as_completed(
-        [waiter(host, port, service, timeout) for host in net.hosts()]
-    ):
+    futures = [waiter(host, port, service, timeout) for host in net.hosts()]
+    for h in asyncio.as_completed(futures):
         if host := await h:
             print(host)
             hosts.append(host)
