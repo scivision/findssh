@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3336467.svg)](https://doi.org/10.5281/zenodo.3336467)
 ![ci](https://github.com/scivision/findssh/workflows/ci/badge.svg)
-[![PyPi Download stats](http://pepy.tech/badge/findssh)](http://pepy.tech/project/findssh)
+[![PyPI Download stats](http://pepy.tech/badge/findssh)](http://pepy.tech/project/findssh)
 
 Platform-independently find SSH servers (or other services with open ports) on an IPv4 subnet in pure Python WITHOUT NMAP.
 Scan entire IPv4 subnet in less than 1 second using Python standard library `asyncio`  coroutines and a single thread.
@@ -62,3 +62,11 @@ Thread pool (100 thread max, slow, heavy):
 
 1.39 s ± 213 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 ```
+
+Trying to open too many threads via ThreadPoolExecutor can cause a system error like
+
+```
+OSError: [Errno 24] Too many open files
+```
+
+Thus in practical terms, using coroutines can be significantly faster than threads while using less system resources.
