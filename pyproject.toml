@@ -4,7 +4,6 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "findssh"
-version = "2.0.0"
 description = "find open servers on IPv4 subnet such as SSH"
 keywords = ["port-scan", "ssh"]
 classifiers = [
@@ -24,8 +23,11 @@ classifiers = [
   "Topic :: System :: Networking",
   "Topic :: Utilities"
 ]
-dynamic = ["readme"]
+dynamic = ["readme", "version"]
 requires-python = ">=3.9"
+
+[project.scripts]
+findssh = "findssh.__main__:main"
 
 [project.optional-dependencies]
 tests = ["pytest"]
@@ -33,6 +35,7 @@ lint = ["flake8", "flake8-bugbear", "flake8-builtins", "flake8-blind-except", "m
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.md"], content-type = "text/markdown"}
+version = {attr = "findssh.__version__"}
 
 [tool.black]
 line-length = 90

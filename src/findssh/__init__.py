@@ -6,6 +6,8 @@ from .coro import get_hosts
 
 __all__ = ["get_hosts", "address2net", "get_lan_ip"]
 
+__version__ = "2.0.1"
+
 
 def get_lan_ip() -> ipaddress.IPv4Address | ipaddress.IPv6Address:
     """
