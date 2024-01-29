@@ -13,7 +13,9 @@ def get_lan_ip() -> ipaddress.IPv4Address | ipaddress.IPv6Address:
     ref: http://stackoverflow.com/a/23822431
     """
 
-    return ipaddress.ip_address(socket.gethostbyname(socket.gethostname()))
+    name = socket.gethostname()
+    host = socket.gethostbyname(name)
+    return ipaddress.ip_address(host)
 
 
 def address2net(
