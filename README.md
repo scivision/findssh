@@ -38,6 +38,12 @@ from command line:
 python -m findssh
 ```
 
+or use project script e.g. from [pipx](https://github.com/pypa/pipx):
+
+```sh
+findssh
+```
+
 * `-s`  check the string from the server to attempt to verify the correct service has been found
 * `-t` timeout per server (seconds)  useful for high latency connection
 * `-b` baseip (check other subnet besides your own)
