@@ -1,7 +1,7 @@
 # Find SSH servers (without NMAP)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3336467.svg)](https://doi.org/10.5281/zenodo.3336467)
-![ci](https://github.com/scivision/findssh/workflows/ci/badge.svg)
+[![ci](https://github.com/scivision/findssh/actions/workflows/ci.yml/badge.svg)](https://github.com/scivision/findssh/actions/workflows/ci.yml)
 [![PyPI Download stats](http://pepy.tech/badge/findssh)](http://pepy.tech/project/findssh)
 
 Platform-independently find SSH servers (or other services with open ports) on an IPv4 subnet in pure Python WITHOUT NMAP.
