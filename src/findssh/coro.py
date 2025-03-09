@@ -35,8 +35,8 @@ async def get_hosts(
 
 
 async def waiter(
-    host: ip.IPv4Address, port: int, service: str, timeout: float
-) -> tuple[ip.IPv4Address, str]:
+    host: ip.IPv4Address, port: int, service: str | None, timeout: float
+) -> tuple[ip.IPv4Address, str] | None:
     try:
         res = await asyncio.wait_for(is_port_open(host, port, service), timeout=timeout)
     except asyncio.TimeoutError:
@@ -46,8 +46,8 @@ async def waiter(
 
 
 async def is_port_open(
-    host: ip.IPv4Address, port: int, service: str
-) -> tuple[ip.IPv4Address, str]:
+    host: ip.IPv4Address, port: int, service: str | None
+) -> tuple[ip.IPv4Address, str] | None:
     """
     https://docs.python.org/3/library/asyncio-stream.html#asyncio.open_connection
     """

@@ -1,6 +1,7 @@
 """
 normally we use coroutines, but for demo purposes we have threadpool too.
 """
+
 import ipaddress
 
 import findssh.threadpool

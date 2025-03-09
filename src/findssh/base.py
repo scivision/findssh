@@ -1,10 +1,11 @@
 from __future__ import annotations
 import ipaddress as ip
 import socket
-import typing as T
+import logging
+from collections.abc import Iterable
 
 
-def get_service(b: bytes, service: str | None = None) -> str:
+def get_service(b: bytes, service: str | None = None) -> str | None:
     """
     splitlines is in case the ASCII/UTF8 response is less than 32 bytes,
     hoping server sends a \r\n
@@ -20,7 +21,7 @@ def get_service(b: bytes, service: str | None = None) -> str:
 
 def is_port_open(
     host: ip.IPv4Address, port: int, timeout: float, service: str | None = None
-) -> tuple[ip.IPv4Address, str]:
+) -> tuple[ip.IPv4Address, str] | None:
     """
     is a port open? Without coroutines.
     """
@@ -38,7 +39,8 @@ def is_port_open(
         try:
             if not (resp := s.recv(32)):
                 return None
-        except (socket.timeout, ConnectionError):
+        except (socket.timeout, ConnectionError) as err:
+            logging.debug(err)
             return None
 
     if svc_txt := get_service(resp, service):
@@ -49,7 +51,7 @@ def is_port_open(
 
 def get_hosts_seq(
     net: ip.IPv4Network, port: int, timeout: float, service: str | None = None
-) -> T.Iterable[tuple[ip.IPv4Address, str]]:
+) -> Iterable[tuple[ip.IPv4Address, str]]:
     """
     find hosts sequentially (no parallelism or concurrency)
     """

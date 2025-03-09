@@ -7,7 +7,7 @@ than the recommended asyncio coroutines in coro.py
 from __future__ import annotations
 import concurrent.futures
 import ipaddress as ip
-import typing as T
+from collections.abc import Iterable
 
 from .base import is_port_open
 
@@ -19,7 +19,7 @@ def get_hosts(
     port: int,
     timeout: float,
     service: str | None = None,
-) -> T.Iterable[tuple[ip.IPv4Address, str]]:
+) -> Iterable[tuple[ip.IPv4Address, str]]:
     """
     loops over hosts in network, one thread per address.
     This is MUCH slower than asyncio coroutines in coro.py
