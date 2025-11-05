@@ -59,7 +59,8 @@ def get_hosts_seq(
 ) -> Iterable[tuple[ip.IPv4Address, str]]:
     """
     Yields hosts in the network that have the specified port open and
-    match the service (if provided), sequentially (no parallelism or concurrency).
+    match the service (if provided),
+    sequentially (no parallelism or concurrency).
     """
 
     for host in net.hosts():

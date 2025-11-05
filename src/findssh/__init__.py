@@ -17,6 +17,7 @@ def get_lan_ip() -> ipaddress.IPv4Address | ipaddress.IPv6Address:
 
     name = socket.gethostname()
     host = socket.gethostbyname(name)
+
     return ipaddress.ip_address(host)
 
 
@@ -24,11 +25,7 @@ def address2net(
     addr: ipaddress.IPv4Address, mask: str = "24"
 ) -> ipaddress.IPv4Network | ipaddress.IPv6Network:
 
-    if isinstance(addr, ipaddress.IPv4Address):
-        net = ipaddress.ip_network(addr.exploded.rsplit(".", 1)[0] + f".0/{mask}")
-    elif isinstance(addr, ipaddress.IPv6Address):
-        net = ipaddress.ip_network(addr.exploded.rsplit(":", 1)[0] + f":0/{mask}")
-    else:
-        raise TypeError(addr)
+    if isinstance(addr, (ipaddress.IPv4Address, ipaddress.IPv6Address)):
+        return ipaddress.ip_network(f"{addr}/{mask}", strict=False)
 
-    return net
+    raise TypeError(f"Unsupported address type: {type(addr).__name__} (value: {addr})")

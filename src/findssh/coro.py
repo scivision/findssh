@@ -43,7 +43,6 @@ async def get_hosts(
             hosts.append(host)
 
     return hosts
-    return hosts
 
 
 async def waiter(

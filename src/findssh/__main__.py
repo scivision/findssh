@@ -45,8 +45,8 @@ def main():
     )
     P = p.parse_args()
 
-    if P.verbose:
-        logging.basicConfig(level=logging.DEBUG)
+    ll = logging.DEBUG if P.verbose else logging.INFO
+    logging.basicConfig(level=ll)
 
     if not P.baseip:
         ownip = get_lan_ip()

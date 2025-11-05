@@ -6,6 +6,7 @@ than the recommended asyncio coroutines in coro.py
 
 from __future__ import annotations
 import concurrent.futures
+import logging
 import ipaddress as ip
 from collections.abc import Iterable
 
@@ -37,5 +38,7 @@ def get_hosts(
                 if res := future.result():
                     yield res
         except KeyboardInterrupt:
-            print("KeyboardInterrupt")
+            logging.info("KeyboardInterrupt")
+            # the shutdown() is necessary to immediately halt threads, otherwise the
+            # futures are still waited on
             exc.shutdown(wait=True, cancel_futures=True)
