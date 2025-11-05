@@ -11,12 +11,15 @@ def get_service(b: bytes, service: str | None = None) -> str | None:
     hoping server sends a \r\n
     """
 
-    svc_txt = b.splitlines()[0].decode("utf-8", errors="ignore")
+    if lines := b.splitlines():
+        svc_txt = lines[0].decode("utf-8", errors="ignore")
     # %% optional service validation
-    if service and service not in svc_txt.lower():
-        return None
+        if service and service not in svc_txt.lower():
+            return None
 
-    return svc_txt
+        return svc_txt
+
+    return None
 
 
 def is_port_open(
@@ -37,10 +40,12 @@ def is_port_open(
             return None
 
         try:
+            # If recv returns empty bytes, the connection was closed by the remote host.
+            # This does not necessarily mean the port is closed, but no service banner was received.
             if not (resp := s.recv(32)):
                 return None
         except (socket.timeout, ConnectionError) as err:
-            logging.debug(err)
+            logging.debug("Socket error: %s", err)
             return None
 
     if svc_txt := get_service(resp, service):
@@ -53,7 +58,8 @@ def get_hosts_seq(
     net: ip.IPv4Network, port: int, timeout: float, service: str | None = None
 ) -> Iterable[tuple[ip.IPv4Address, str]]:
     """
-    find hosts sequentially (no parallelism or concurrency)
+    Yields hosts in the network that have the specified port open and
+    match the service (if provided), sequentially (no parallelism or concurrency).
     """
 
     for host in net.hosts():
