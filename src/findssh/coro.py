@@ -19,18 +19,30 @@ async def get_hosts(
     port: int,
     timeout: float,
     service: str | None = None,
+    max_concurrent: int = 100,
 ) -> list[tuple[ip.IPv4Address, str]]:
     """
     Timeout must be finite otherwise non-existant hosts are waited for forever
+
+    use of Semaphore limits number of concurrent connections to avoid
+    overloading system with large nets
+    100 is a reasonable default for most systems
     """
 
     hosts = []
-    futures = [waiter(host, port, service, timeout) for host in net.hosts()]
+    semaphore = asyncio.Semaphore(max_concurrent)
+
+    async def sem_waiter(host):
+        async with semaphore:
+            return await waiter(host, port, service, timeout)
+
+    futures = [sem_waiter(host) for host in net.hosts()]
     for h in asyncio.as_completed(futures):
         if host := await h:
-            print(host)
+            logging.info(f"Found host: {host}")
             hosts.append(host)
 
+    return hosts
     return hosts
 
 
@@ -58,7 +70,7 @@ async def is_port_open(
         if not (b := await reader.read(32)):
             return None
     except OSError as err:  # to avoid flake8 error OSError has ConnectionError
-        logging.debug(err)
+        logging.debug(f"Error connecting to {host_str}:{port} - {err}")
         return None
 
     if svc_txt := get_service(b, service):
