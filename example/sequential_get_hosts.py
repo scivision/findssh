@@ -5,6 +5,8 @@ example of using findssh from a Python script.
 Sequential non-parallel host discovery is impractically slow
 """
 
+import ipaddress
+
 import findssh
 from findssh.base import get_hosts_seq
 
@@ -16,6 +18,8 @@ ownIP = findssh.get_lan_ip()
 print("own address", ownIP)
 net = findssh.address2net(ownIP)
 print("searching", net)
+
+assert isinstance(net, ipaddress.IPv4Network), "only IPv4 networks are supported"
 
 for host in get_hosts_seq(net, PORT, TIMEOUT):
     print(host)

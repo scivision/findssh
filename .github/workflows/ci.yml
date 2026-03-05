@@ -28,13 +28,10 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - run: pip install .[tests,lint]
-
-    - name: syntax check
-      run: flake8
+    - run: pip install .[tests]
 
     - name: type annotation check
-      run: mypy
+      run: mypy --non-interactive --install-types
 
     - run: pytest
       timeout-minutes: 2

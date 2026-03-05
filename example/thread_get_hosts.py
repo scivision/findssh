@@ -7,6 +7,7 @@ Threads are MUCH slower than using asyncio as in asyncio_get_hosts.py
 
 import findssh
 import findssh.threadpool
+import ipaddress
 
 PORT = 22  # default SSH port
 TIMEOUT = 1.0  # seconds
@@ -16,6 +17,8 @@ ownIP = findssh.get_lan_ip()
 print("own address", ownIP)
 net = findssh.address2net(ownIP)
 print("searching", net)
+
+assert isinstance(net, ipaddress.IPv4Network), "only IPv4 networks are supported"
 
 for host in findssh.threadpool.get_hosts(net, PORT, TIMEOUT):
     print(host)

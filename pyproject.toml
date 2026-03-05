@@ -30,8 +30,7 @@ requires-python = ">=3.9"
 findssh = "findssh.__main__:main"
 
 [project.optional-dependencies]
-tests = ["pytest"]
-lint = ["flake8", "flake8-bugbear", "flake8-builtins", "flake8-blind-except", "mypy"]
+tests = ["pytest", "mypy"]
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.md"], content-type = "text/markdown"}
@@ -41,4 +40,6 @@ version = {attr = "findssh.__version__"}
 line-length = 90
 
 [tool.mypy]
-files = ["src"]
+files = ["."]
+install_types = true
+exclude = ["^build([/\\\\]|$)"]

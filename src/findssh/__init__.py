@@ -22,7 +22,7 @@ def get_lan_ip() -> ipaddress.IPv4Address | ipaddress.IPv6Address:
 
 
 def address2net(
-    addr: ipaddress.IPv4Address, mask: str = "24"
+    addr: ipaddress.IPv4Address | ipaddress.IPv6Address, mask: str = "24"
 ) -> ipaddress.IPv4Network | ipaddress.IPv6Network:
 
     if isinstance(addr, (ipaddress.IPv4Address, ipaddress.IPv6Address)):

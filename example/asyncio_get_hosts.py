@@ -4,6 +4,7 @@ example of using findssh from a Python script
 """
 
 import asyncio
+import ipaddress
 
 import findssh
 
@@ -15,5 +16,7 @@ ownIP = findssh.get_lan_ip()
 print("own address", ownIP)
 net = findssh.address2net(ownIP)
 print("searching", net)
+
+assert isinstance(net, ipaddress.IPv4Network), "only IPv4 networks are supported"
 
 asyncio.run(findssh.get_hosts(net, PORT, TIMEOUT))

@@ -13,7 +13,7 @@ def get_service(b: bytes, service: str | None = None) -> str | None:
 
     if lines := b.splitlines():
         svc_txt = lines[0].decode("utf-8", errors="ignore")
-    # %% optional service validation
+        # %% optional service validation
         if service and service not in svc_txt.lower():
             return None
 
