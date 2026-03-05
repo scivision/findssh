@@ -5,6 +5,7 @@ on:
     paths:
     - "**.py"
     - .github/workflows/ci.yml
+    - "**.toml"
 
 jobs:
 
@@ -23,7 +24,7 @@ jobs:
           os: macos-latest
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
@@ -39,3 +40,6 @@ jobs:
     - name: main command line
       run: python -m findssh
       timeout-minutes: 1
+
+    - uses: pre-commit-ci/lite-action@v1.1.0
+      if: always()
