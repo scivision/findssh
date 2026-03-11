@@ -4,13 +4,12 @@ significantly slower and uses more resources
 than the recommended asyncio coroutines in coro.py
 """
 
-from __future__ import annotations
 import concurrent.futures
 import logging
 import ipaddress as ip
 from collections.abc import Iterable
 
-from .base import is_port_open
+from .base import HostResult, is_port_open
 
 __all__ = ["get_hosts"]
 
@@ -20,7 +19,7 @@ def get_hosts(
     port: int,
     timeout: float,
     service: str | None = None,
-) -> Iterable[tuple[ip.IPv4Address, str]]:
+) -> Iterable[HostResult]:
     """
     loops over hosts in network, one thread per address.
     This is MUCH slower than asyncio coroutines in coro.py

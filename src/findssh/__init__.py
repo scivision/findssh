@@ -12,7 +12,7 @@ __version__ = "2.0.1"
 def get_lan_ip() -> ipaddress.IPv4Address | ipaddress.IPv6Address:
     """
     get IP address of currently used LAN interface
-    ref: http://stackoverflow.com/a/23822431
+    ref: https://stackoverflow.com/a/23822431
     """
 
     name = socket.gethostname()
