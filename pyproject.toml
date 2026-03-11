@@ -19,12 +19,14 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3 :: Only",
   "Topic :: Security",
   "Topic :: System :: Networking",
   "Topic :: Utilities"
 ]
 dynamic = ["readme", "version"]
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 
 [project.scripts]
 findssh = "findssh.__main__:main"

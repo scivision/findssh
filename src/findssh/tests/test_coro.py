@@ -1,5 +1,6 @@
 import ipaddress
 import asyncio
+import pytest
 
 import findssh
 import findssh.coro
@@ -15,3 +16,9 @@ def test_coroutine():
         assert isinstance(host, ipaddress.IPv4Address)
         assert isinstance(svc, str)
         break
+
+
+def test_coroutine_max_concurrent_validation():
+    net = ipaddress.ip_network("127.0.0.1/32", strict=False)
+    with pytest.raises(ValueError):
+        asyncio.run(findssh.coro.get_hosts(net, PORT, TIMEOUT, max_concurrent=0))

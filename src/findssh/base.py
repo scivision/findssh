@@ -1,8 +1,9 @@
-from __future__ import annotations
 import ipaddress as ip
 import socket
 import logging
-from collections.abc import Iterable
+import collections.abc
+
+type HostResult = tuple[ip.IPv4Address, str]
 
 
 def get_service(b: bytes, service: str | None = None) -> str | None:
@@ -24,7 +25,7 @@ def get_service(b: bytes, service: str | None = None) -> str | None:
 
 def is_port_open(
     host: ip.IPv4Address, port: int, timeout: float, service: str | None = None
-) -> tuple[ip.IPv4Address, str] | None:
+) -> HostResult | None:
     """
     is a port open? Without coroutines.
     """
@@ -56,7 +57,7 @@ def is_port_open(
 
 def get_hosts_seq(
     net: ip.IPv4Network, port: int, timeout: float, service: str | None = None
-) -> Iterable[tuple[ip.IPv4Address, str]]:
+) -> collections.abc.Iterable[HostResult]:
     """
     Yields hosts in the network that have the specified port open and
     match the service (if provided),
