@@ -7,8 +7,10 @@
 Platform-independently find SSH servers (or other services with open ports) on an IPv4 subnet in pure Python WITHOUT NMAP.
 Scan entire IPv4 subnet in less than 1 second using Python standard library `asyncio`  coroutines and a single thread.
 
-The default
-[asyncio coroutine](https://docs.python.org/3/library/asyncio.html)
+The findssh
+[asyncio](https://docs.python.org/3/library/asyncio.html)
+coroutine
+[TaskGroup](https://docs.python.org/3/library/asyncio-task.html#task-groups)
 uses a single thread and is more than 10x faster than
 [concurrent.futures.ThreadPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html).
 
@@ -23,7 +25,7 @@ or from this repo:
 ```sh
 git clone https://github.com/scivision/findssh
 
-pip install -e findssh
+pip install -e ./findssh
 ```
 
 ## Usage
@@ -42,6 +44,12 @@ or use project script e.g. from [pipx](https://github.com/pypa/pipx):
 
 ```sh
 findssh
+```
+
+For example, to scan your local subnet for SSH servers:
+
+```sh
+findssh -p 22 192.168.1.0
 ```
 
 * `-s`  check the string from the server to attempt to verify the correct service has been found
