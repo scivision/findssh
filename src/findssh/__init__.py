@@ -2,11 +2,11 @@ from __future__ import annotations
 import socket
 import ipaddress
 
-from .coro import get_hosts
+from .coro import get_hosts, discover_services
 
-__all__ = ["get_hosts", "address2net", "get_lan_ip"]
+__all__ = ["get_hosts", "discover_services", "address2net", "get_lan_ip"]
 
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
 
 def get_lan_ip() -> ipaddress.IPv4Address | ipaddress.IPv6Address:

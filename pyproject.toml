@@ -30,7 +30,7 @@ requires-python = ">=3.11"
 findssh = "findssh.__main__:main"
 
 [project.optional-dependencies]
-tests = ["pytest", "mypy"]
+tests = ["pytest", "pytest-asyncio", "mypy"]
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.md"], content-type = "text/markdown"}
