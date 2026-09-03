@@ -3,7 +3,7 @@ import socket
 import logging
 import collections.abc
 
-type HostResult = tuple[ip.IPv4Address, str]
+HostResult = tuple[ip.IPv4Address, str]
 
 
 def get_service(b: bytes, service: str | None = None) -> str | None:
